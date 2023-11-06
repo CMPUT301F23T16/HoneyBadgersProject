@@ -42,8 +42,16 @@ public class ItemListActivityTest {
 
         // Check if Guitar item is present
         onView(withText("Guitar")).check(matches(isDisplayed()));
-        onView(withText("2010-01-02")).check(matches(isDisplayed()));
-        onView(withText("200.4")).check(matches(isDisplayed()));
+        onView(withText("2010-02-01")).check(matches(isDisplayed()));
+        onView(withText("$200.40")).check(matches(isDisplayed()));
+
+        // Check if TV item is present
+        onView(withText("TV")).check(matches(isDisplayed()));
+        onView(withText("2015-02-03")).check(matches(isDisplayed()));
+        onView(withText("$15.00")).check(matches(isDisplayed()));
+
+        // Check that the total is correct
+        onView(withId(R.id.total_amount)).check(matches(withText("$215.40")));
 
     }
 

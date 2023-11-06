@@ -64,7 +64,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     }
 
     /**
-     *
+     * Counts the number of items in items list
      * @return number of items in items list
      */
     @Override
