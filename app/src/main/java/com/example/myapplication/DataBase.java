@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -30,7 +29,7 @@ public class DataBase {
      * @param userName This is the username of the user
      * @param context Parent object
      */
-    public DataBase(String userName, MainActivity context) {
+    public DataBase(String userName, ItemListActivity context) {
         this.itemList = new ArrayList<>();
 
         this.db = FirebaseFirestore.getInstance();

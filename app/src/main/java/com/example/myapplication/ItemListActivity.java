@@ -5,18 +5,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
 
 
 /**
  * Setup the database for the application.
  * Populate the screen with all the items.
  */
-public class MainActivity extends AppCompatActivity implements DataBase.ItemListUpdateListener {
+public class ItemListActivity extends AppCompatActivity implements DataBase.ItemListUpdateListener {
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
