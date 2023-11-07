@@ -48,7 +48,7 @@ public class DataBase {
                     //For each item in the cloud db, add it to the list
                     for (QueryDocumentSnapshot doc: querySnapshots) {
 
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
                         String name = doc.getId();
                         LocalDate date = LocalDate.parse(doc.getString("dateAdded"), formatter);

@@ -60,11 +60,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         //Set the TextView text for the item
         itemContent.itemName.setText(item.getName());
         itemContent.itemDateAdded.setText(item.getDateAdded().toString());
-        itemContent.itemPrice.setText(item.getPrice().toString());
+        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
     }
 
     /**
-     *
+     * Counts the number of items in items list
      * @return number of items in items list
      */
     @Override

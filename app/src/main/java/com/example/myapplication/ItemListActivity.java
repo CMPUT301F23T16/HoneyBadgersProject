@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -16,6 +19,7 @@ public class ItemListActivity extends AppCompatActivity implements DataBase.Item
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
     private DataBase db; //Source of item list
+
 
     /**
      * When activity is created, setup database and user's items
@@ -37,6 +41,10 @@ public class ItemListActivity extends AppCompatActivity implements DataBase.Item
         itemListView.setLayoutManager(new LinearLayoutManager(this));
         itemListAdapter = new ItemArrayAdapter(this, db.getItemList());
         itemListView.setAdapter(itemListAdapter);
+
+        //Set the total value
+        Double total = calculateTotal(db.getItemList());
+        updateTotalBox(total);
     }
 
     /**
@@ -44,7 +52,36 @@ public class ItemListActivity extends AppCompatActivity implements DataBase.Item
      * This can happen due to factors internal or external to this application.
      */
     public void onItemListUpdate(){
+        //Update the items shown on the screen
         itemListAdapter.notifyDataSetChanged();
+
+        //Update the total value
+        Double total = calculateTotal(db.getItemList());
+        updateTotalBox(total);
+    }
+
+    /**
+     * Accesses the last received items list from database and
+     * calculates the total price of the items
+     * @param itemList List of items to calculate total of
+     * @return The total price
+     */
+    private Double calculateTotal(ArrayList<Item> itemList) {
+        Double totalPrice = 0.0;
+        for(Item i : itemList){
+            totalPrice += i.getPrice();
+        }
+        return totalPrice;
+    }
+
+    /**
+     * Sets the value of the total box on the screen
+     * @param total value that the total is set to
+     */
+    private void updateTotalBox(double total) {
+        TextView totalBox = findViewById(R.id.total_amount);
+        totalBox.setText(String.format("$%.2f", total));
     }
 }
+
 
