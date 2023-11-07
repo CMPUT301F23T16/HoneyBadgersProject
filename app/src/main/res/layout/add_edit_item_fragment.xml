@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="600sp">
+
+    <EditText
+        android:id="@+id/add_item_name"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="5dp"
+        android:hint="Item name"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/add_item_date"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="18sp"
+        android:ems="10"
+        android:hint="date of purchase"
+        android:inputType="date"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_name" />
+
+    <EditText
+        android:id="@+id/add_item_description"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="2dp"
+        android:hint="brief description"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_make"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_date" />
+
+    <EditText
+        android:id="@+id/add_item_make"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="3dp"
+        android:hint="make"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_model"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_description" />
+
+    <EditText
+        android:id="@+id/add_item_model"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="5dp"
+        android:hint="model"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_serial_number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_make" />
+
+    <EditText
+        android:id="@+id/add_item_serial_number"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="18sp"
+        android:hint="serial number"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_model" />
+
+    <EditText
+        android:id="@+id/add_item_price"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:textSize="18sp"
+        android:hint="estimated value"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_comment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_serial_number" />
+
+    <EditText
+        android:id="@+id/add_item_comment"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:textSize="18sp"
+        android:hint="comment"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_tag_spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_price" />
+
+    <Spinner
+        android:id="@+id/add_item_tag_spinner"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="5dp"
+        android:textSize="18sp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_comment" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
