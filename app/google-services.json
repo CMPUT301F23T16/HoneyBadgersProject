@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "372895179986",
+    "project_id": "honeybadgersproject-a46cd",
+    "storage_bucket": "honeybadgersproject-a46cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372895179986:android:bdb28e27bc43a49410790b",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAupUvYPXDPx0aCqlt-9HWE3ZCh9R5GRmw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
