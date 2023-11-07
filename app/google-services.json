@@ -1,23 +1,17 @@
 {
   "project_info": {
-<<<<<<< HEAD
-    "project_number": "372895179986",
-    "project_id": "honeybadgersproject-a46cd",
-    "storage_bucket": "honeybadgersproject-a46cd.appspot.com"
-=======
+
     "project_number": "1017721798505",
     "project_id": "project301-b2de7",
     "storage_bucket": "project301-b2de7.appspot.com"
->>>>>>> US-01.01.01
+
   },
   "client": [
     {
       "client_info": {
-<<<<<<< HEAD
-        "mobilesdk_app_id": "1:372895179986:android:bdb28e27bc43a49410790b",
-=======
+
         "mobilesdk_app_id": "1:1017721798505:android:70bb83abf18fee6bc987f8",
->>>>>>> US-01.01.01
+
         "android_client_info": {
           "package_name": "com.example.myapplication"
         }
@@ -25,11 +19,8 @@
       "oauth_client": [],
       "api_key": [
         {
-<<<<<<< HEAD
-          "current_key": "AIzaSyAupUvYPXDPx0aCqlt-9HWE3ZCh9R5GRmw"
-=======
+
           "current_key": "AIzaSyCT_65J5ifZ0lYpPhj4mrlps5_Ao8sYl9Y"
->>>>>>> US-01.01.01
         }
       ],
       "services": {
