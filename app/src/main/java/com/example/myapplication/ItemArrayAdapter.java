@@ -16,8 +16,12 @@ import java.util.ArrayList;
  * Adapter for items array list. Maps each item's attributes to the screen.
  */
 public class ItemArrayAdapter extends RecyclerView.Adapter {
+    public interface OnItemClickListener {
+        void onItemClick(Item item, int position);
+    }
     private ArrayList<Item> items;
     private Context context;
+    private final OnItemClickListener listener;
 
 
     /**
@@ -25,9 +29,10 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
      * @param context parent object
      * @param items list of items
      */
-    public ItemArrayAdapter(Context context, ArrayList<Item> items) {
+    public ItemArrayAdapter(Context context, ArrayList<Item> items, OnItemClickListener listener) {
         this.items = items;
         this.context = context;
+        this.listener = listener;
     }
 
     /**
@@ -54,15 +59,17 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Item item = items.get(position);
-
         ItemContentViewHolder itemContent = (ItemContentViewHolder) holder;
+        itemContent.bind(items.get(position), position, listener);
 
-        //Set the TextView text for the item
-        itemContent.itemName.setText(item.getName());
 
-        itemContent.itemDateAdded.setText(item.getDateAdded());
-
-        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
+//
+//        //Set the TextView text for the item
+//        itemContent.itemName.setText(item.getName());
+//
+//        itemContent.itemDateAdded.setText(item.getDateAdded());
+//
+//        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
     }
 
     /**
@@ -77,7 +84,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     /**
      * This class maps each text view (item attribute) in item_content to its attributes
      */
-    public class ItemContentViewHolder extends RecyclerView.ViewHolder {
+    public class ItemContentViewHolder extends RecyclerView.ViewHolder{
         TextView itemName;
         TextView itemDateAdded;
         TextView itemPrice;
@@ -94,6 +101,22 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             itemDateAdded = itemView.findViewById(R.id.item).findViewById(R.id.item_date);
             itemPrice = itemView.findViewById(R.id.item).findViewById(R.id.item_price);
 
+        }
+
+
+        public void bind(final Item item, final int position, final OnItemClickListener listener) {
+            //Set the TextView text for the item
+            itemName.setText(item.getName());
+
+            itemDateAdded.setText(item.getDateAdded());
+
+            itemPrice.setText(String.format("$%.2f", item.getPrice()));
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    listener.onItemClick(item, position);
+                }
+            });
         }
     }
 

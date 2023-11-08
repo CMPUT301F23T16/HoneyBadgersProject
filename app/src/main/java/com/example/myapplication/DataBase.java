@@ -101,8 +101,11 @@ public class DataBase {
 
 
     public void addItem(Item item){
-//        itemList.add(item);
         itemsRef.document(item.getName()).set(item);
+    }
+
+    public void deleteItem(Item item){
+        itemsRef.document(item.getName()).delete();
     }
 
     /**

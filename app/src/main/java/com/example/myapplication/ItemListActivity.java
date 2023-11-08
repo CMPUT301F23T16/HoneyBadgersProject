@@ -18,13 +18,15 @@ import java.util.ArrayList;
  */
 public class ItemListActivity extends AppCompatActivity
         implements DataBase.ItemListUpdateListener,
-        AddItemFragment.AddItemInteractionInterface {
+        AddItemFragment.AddItemInteractionInterface,
+        EditItemFragment.EditItemInteractionInterface{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
 
     private Button addItemButton;
     private DataBase db; //Source of item list
+    private int clickedItemIndex; // Index of item that is recently clicked on
 
 
     /**
@@ -47,7 +49,15 @@ public class ItemListActivity extends AppCompatActivity
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
         itemListView.setLayoutManager(new LinearLayoutManager(this));
-        itemListAdapter = new ItemArrayAdapter(this, db.getItemList());
+        itemListAdapter = new ItemArrayAdapter(this, db.getItemList(), new ItemArrayAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Item item, int position) {
+                clickedItemIndex = position;
+                EditItemFragment.newInstance(item).show(getSupportFragmentManager(), "Edit Item");
+            }
+        });
+
+
         itemListView.setAdapter(itemListAdapter);
 
         //Set the total value
@@ -103,5 +113,13 @@ public class ItemListActivity extends AppCompatActivity
         db.addItem(item);
     }
 
+    @Override
+    public void EditFragmentOKPressed(Item item) {
+        // Remove the existing outdated item from DB
+        db.deleteItem(db.getItemList().get(clickedItemIndex));
+
+        // Add the updated item to DB
+        db.addItem(item);
+    }
 }
 
