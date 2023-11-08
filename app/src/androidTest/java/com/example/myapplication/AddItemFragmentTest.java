@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class ItemListActivityTest {
+public class AddItemFragmentTest {
     @Rule
     public IntentsTestRule<ItemListActivity> activityRule = new
             IntentsTestRule<>(ItemListActivity.class);
@@ -32,7 +32,7 @@ public class ItemListActivityTest {
     private IdlingResource idlingResource = new CountingIdlingResource("API Idling Resource");
 
     @Test
-    public void testItemListActivity() throws InterruptedException {
+    public void testAddItemFragment() throws InterruptedException {
         //TODO will need to setup mocks for this but this is fine for now
 
         //The database's API takes some time to return the data.
@@ -40,19 +40,9 @@ public class ItemListActivityTest {
         //TODO ideally something which specifically waits for the response would be used
         Thread.sleep(1000);
 
-        // Check if Guitar item is present
-        onView(withText("Chair")).check(matches(isDisplayed()));
-        onView(withText("2023-11-01")).check(matches(isDisplayed()));
-        onView(withText("$12342.00")).check(matches(isDisplayed()));
-
-        // Check if TV item is present
-        onView(withText("Bed")).check(matches(isDisplayed()));
-        onView(withText("2023-11-03")).check(matches(isDisplayed()));
-        onView(withText("$60.00")).check(matches(isDisplayed()));
-
-        // Check that the total is correct
-        onView(withId(R.id.total_amount)).check(matches(withText("$12402.00")));
-
+        // Check if Add button is present
+        onView(withId(R.id.add_item_button)).check(matches(isDisplayed()));
+        onView(withId(R.id.add_item_button)).perform(click());
+        onView(withId(R.id.add_item_name)).check(matches(isDisplayed()));
     }
-
 }

@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,10 +16,14 @@ import java.util.ArrayList;
  * Setup the database for the application.
  * Populate the screen with all the items.
  */
-public class ItemListActivity extends AppCompatActivity implements DataBase.ItemListUpdateListener {
+public class ItemListActivity extends AppCompatActivity
+        implements DataBase.ItemListUpdateListener,
+        AddItemFragment.AddItemInteractionInterface {
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
+
+    private Button addItemButton;
     private DataBase db; //Source of item list
 
 
@@ -36,6 +42,8 @@ public class ItemListActivity extends AppCompatActivity implements DataBase.Item
         //Data base instance with userName
         db = new DataBase("Adi", this);
 
+        addItemButton = findViewById(R.id.add_item_button);
+
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
         itemListView.setLayoutManager(new LinearLayoutManager(this));
@@ -45,6 +53,13 @@ public class ItemListActivity extends AppCompatActivity implements DataBase.Item
         //Set the total value
         Double total = calculateTotal(db.getItemList());
         updateTotalBox(total);
+
+        addItemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
+            }
+        });
     }
 
     /**
@@ -82,6 +97,11 @@ public class ItemListActivity extends AppCompatActivity implements DataBase.Item
         TextView totalBox = findViewById(R.id.total_amount);
         totalBox.setText(String.format("$%.2f", total));
     }
-}
 
+    @Override
+    public void AddFragmentOKPressed(Item item) {
+        db.addItem(item);
+    }
+
+}
 

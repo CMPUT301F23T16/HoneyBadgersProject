@@ -1,8 +1,11 @@
 package com.example.myapplication;
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -11,9 +14,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.time.format.DateTimeFormatter;
+
 
 /**This class represents the cloud database the app is connecting to.
  * All communications with the database are handled here.
@@ -36,6 +45,8 @@ public class DataBase {
         this.itemsRef = db.collection(userName); // Each user has their own collection
 
         itemsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshots,
                                 @Nullable FirebaseFirestoreException error) {
@@ -47,16 +58,28 @@ public class DataBase {
                     itemList.clear();
                     //For each item in the cloud db, add it to the list
                     for (QueryDocumentSnapshot doc: querySnapshots) {
-
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
                         String name = doc.getId();
-                        LocalDate date = LocalDate.parse(doc.getString("dateAdded"), formatter);
+                        Date date;
+                        try {
+                            date = new SimpleDateFormat("yyyy-MM-dd").parse(doc.getString("dateAdded"));
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+
                         Double price = doc.getDouble("price");
+                        String description = doc.getString("description");
+                        String make = doc.getString("make");
+                        String model = doc.getString("model");
+                        String serial = doc.getString("serial");
+                        String comment = doc.getString("comment");
+                        String tag = doc.getString("tag");
+
+                        Item temp = new Item(name, price, date, description, make,
+                                model, serial, comment, tag);
 
                         Log.d("Firestore", String.format("Item(%s, %s, %s) fetched",
                                 name, doc.getString("dateAdded"), price));
-                        itemList.add(new Item(name, price, date));
+                        itemList.add(temp);
                     }
 
                     //This will notify any listeners via ItemListUpdateListener interface
@@ -76,6 +99,12 @@ public class DataBase {
         return itemList;
     }
 
+
+    public void addItem(Item item){
+//        itemList.add(item);
+        itemsRef.document(item.getName()).set(item);
+    }
+
     /**
      * Interface for itemList listeners
      */
@@ -85,5 +114,5 @@ public class DataBase {
          */
         public void onItemListUpdate();
     }
-
+    
 }
