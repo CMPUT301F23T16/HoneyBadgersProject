@@ -11,9 +11,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+
 /**
  * This class represents an item.
  */
+
 public class Item implements Serializable {
     private String name;
     private double price;
@@ -88,6 +90,7 @@ public class Item implements Serializable {
     public void setTag(String tag) {
         this.tag = tag;
     }
+
 
     /**
      * This constructor creates a new Item

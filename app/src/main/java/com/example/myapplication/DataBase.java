@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -13,12 +14,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.time.format.DateTimeFormatter;
+
 
 /**This class represents the cloud database the app is connecting to.
  * All communications with the database are handled here.
@@ -41,6 +45,7 @@ public class DataBase {
         this.itemsRef = db.collection(userName); // Each user has their own collection
 
         itemsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshots,
@@ -53,7 +58,6 @@ public class DataBase {
                     itemList.clear();
                     //For each item in the cloud db, add it to the list
                     for (QueryDocumentSnapshot doc: querySnapshots) {
-
                         String name = doc.getId();
                         Date date;
                         try {
@@ -95,6 +99,7 @@ public class DataBase {
         return itemList;
     }
 
+
     public void addItem(Item item){
 //        itemList.add(item);
         itemsRef.document(item.getName()).set(item);
@@ -109,5 +114,5 @@ public class DataBase {
          */
         public void onItemListUpdate();
     }
-
+    
 }

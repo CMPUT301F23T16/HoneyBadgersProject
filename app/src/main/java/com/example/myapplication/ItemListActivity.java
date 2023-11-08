@@ -41,7 +41,9 @@ public class ItemListActivity extends AppCompatActivity
 
         //Data base instance with userName
         db = new DataBase("Adi", this);
+
         addItemButton = findViewById(R.id.add_item_button);
+
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
         itemListView.setLayoutManager(new LinearLayoutManager(this));
@@ -100,4 +102,6 @@ public class ItemListActivity extends AppCompatActivity
     public void AddFragmentOKPressed(Item item) {
         db.addItem(item);
     }
+
 }
+
