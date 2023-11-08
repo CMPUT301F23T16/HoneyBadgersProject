@@ -100,9 +100,20 @@ public class DataBase {
     }
 
 
+    /**
+     * Function adds the input item to the database
+     * @param item Item to be added to the user's item collection in the database
+     */
     public void addItem(Item item){
-//        itemList.add(item);
         itemsRef.document(item.getName()).set(item);
+    }
+
+    /**
+     * Function deletes the input item to the database
+     * @param item Item to be deleted from the user's item collection in the database
+     */
+    public void deleteItem(Item item){
+        itemsRef.document(item.getName()).delete();
     }
 
     /**
