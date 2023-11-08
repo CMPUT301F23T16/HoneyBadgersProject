@@ -108,11 +108,20 @@ public class ItemListActivity extends AppCompatActivity
         totalBox.setText(String.format("$%.2f", total));
     }
 
+    /**
+     * Adds the item received from the AddItemFragment to the user's item collection in DB
+     * @param item item to be added to users item collection in DB
+     */
     @Override
     public void AddFragmentOKPressed(Item item) {
         db.addItem(item);
     }
 
+    /**
+     * Updates an item in the user's item collection (in DB)
+     *      using updated item received from EditItemFragment
+     * @param item item to be replaced in the user's item collection in DB
+     */
     @Override
     public void EditFragmentOKPressed(Item item) {
         // Remove the existing outdated item from DB

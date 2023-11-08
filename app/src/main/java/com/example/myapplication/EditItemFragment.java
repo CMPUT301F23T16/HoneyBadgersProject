@@ -92,7 +92,7 @@ public class EditItemFragment extends DialogFragment {
         itemTag.setText(clickedItem.getTag());
 
 
-
+        // Coding logic for date picker
         purchaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,6 +136,10 @@ public class EditItemFragment extends DialogFragment {
         AlertDialog dialogue = builder.create();
         dialogue.show();
 
+        /*
+            - Implemented Error handling functionality
+            - Eg Dialogue will not be dismissed if user leaved mandatory fields empty
+         */
         dialogue.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
