@@ -26,6 +26,7 @@ public class Item implements Serializable {
     private String serial;
     private String comment;
     private String tag;
+    private boolean isSelected = false;
 
     public void setName(String name) {
         this.name = name;
@@ -169,4 +170,30 @@ public class Item implements Serializable {
     public Double getPrice() {
         return this.price;
     }
+
+    //constructor required for Firestore
+    public Item(){}
+
+    /**
+     * getter for isSelected to verify if the checkbox of an item is selected or not
+     * @return The value of isSelected which can be either true or false
+     */
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    /**
+     * setter for isSelected
+     * @param selected
+     */
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+
+    public Item(String name){
+        this.name = name;
+        this.isSelected = false;
+    }
 }
+

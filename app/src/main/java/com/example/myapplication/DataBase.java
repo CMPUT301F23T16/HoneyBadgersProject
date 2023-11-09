@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**This class represents the cloud database the app is connecting to.
@@ -28,6 +30,11 @@ public class DataBase {
     private FirebaseFirestore db;
     private ArrayList<Item> itemList;
     private CollectionReference itemsRef;
+
+    public DataBase(String userName){
+        this.db = FirebaseFirestore.getInstance();
+        this.itemsRef = db.collection(userName);
+    }
 
     /**
      * Connect to the database and get the user's collection. Setup automatic
@@ -86,8 +93,19 @@ public class DataBase {
                 }
             }
         });
+
     }
 
+    public void deleteSelectedItem(String itemName, ItemListActivity context){
+        itemsRef.document(itemName).delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
+                    context.onItemDelete(itemName);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to Delete item(s)", Toast.LENGTH_SHORT).show();
+                });
+    }
 
     /**
      * itemList getter
@@ -112,5 +130,4 @@ public class DataBase {
          */
         public void onItemListUpdate();
     }
-
 }

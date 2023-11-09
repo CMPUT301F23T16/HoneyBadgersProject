@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,13 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     public ItemArrayAdapter(Context context, ArrayList<Item> items) {
         this.items = items;
         this.context = context;
+    }
+
+    public void unSelectCheckBox(){
+        for (Item i : items){
+            i.setSelected(false);
+        }
+        notifyDataSetChanged();
     }
 
     /**
@@ -59,9 +67,20 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
 
         //Set the TextView text for the item
         itemContent.itemName.setText(item.getName());
-
         itemContent.itemDateAdded.setText(item.getDateAdded().toString());
         itemContent.itemPrice.setText(item.getPrice().toString());
+        itemContent.itemSelected.setChecked(item.isSelected());
+
+        itemContent.itemSelected.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            items.get(itemContent.getAdapterPosition()).setSelected(isChecked);
+        }));
+
+//        itemContent.itemView.setOnClickListener(v -> {
+//            boolean isSelected = item.isSelected();
+//            item.setSelected(!isSelected);
+//            itemContent.itemSelected.setChecked(!isSelected);
+//        });
+
     }
 
     /**
@@ -88,6 +107,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         TextView itemName;
         TextView itemDateAdded;
         TextView itemPrice;
+        CheckBox itemSelected;
 
 
         /**
@@ -100,10 +120,15 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             itemName = itemView.findViewById(R.id.item).findViewById(R.id.item_name);
             itemDateAdded = itemView.findViewById(R.id.item).findViewById(R.id.item_date);
             itemPrice = itemView.findViewById(R.id.item).findViewById(R.id.item_price);
+            itemSelected = itemView.findViewById(R.id.check_box);
 
+//            itemSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//                int adapterPosition = getAdapterPosition();
+//                if (adapterPosition != RecyclerView.NO_POSITION){
+//                    items.get(adapterPosition).setSelected(isChecked);
+//                }
+//            });
         }
     }
-
-
 }
 

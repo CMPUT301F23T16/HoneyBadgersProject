@@ -4,15 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.firestore.CollectionReference;
 
 import java.util.ArrayList;
-
-
+import java.util.List;
 
 /**
  * Setup the database for the application.
@@ -25,9 +29,10 @@ public class ItemListActivity extends AppCompatActivity
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
-
-    private Button addItemButton;
     private DataBase db; //Source of item list
+    private List<Item> itemList;
+    private Button addItemButton;
+    private Button deleteItemButton;
 
 
     /**
@@ -43,15 +48,21 @@ public class ItemListActivity extends AppCompatActivity
         setContentView(R.layout.item_list_activity);
 
         //Data base instance with userName
-        db = new DataBase("Adi", this);
+        String userName = "Adi";
+        db = new DataBase (userName, this);
 
         addItemButton = findViewById(R.id.add_item_button);
+        deleteItemButton = findViewById(R.id.delete_item_button);
+        deleteItemButton.setOnClickListener(view ->{
+            deleteConfirmDialog();
+        });
 
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
         itemListView.setLayoutManager(new LinearLayoutManager(this));
         itemListAdapter = new ItemArrayAdapter(this, db.getItemList());
         itemListView.setAdapter(itemListAdapter);
+
 
         //Set the total value
         Double total = calculateTotal(db.getItemList());
@@ -64,6 +75,51 @@ public class ItemListActivity extends AppCompatActivity
             }
         });
 
+    }
+
+    public void deleteConfirmDialog(){
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Confirm Delete")
+                .setMessage("Are you sure you want to delete the selected item(s)?")
+                .setPositiveButton("Delete", (dialogInterface, which) -> {
+                    deleteSelectedItem();
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+
+        dialog.setOnDismissListener(dialogInterface -> {
+            itemListAdapter.unSelectCheckBox();
+        });
+
+        dialog.show();
+    }
+
+    private void deleteSelectedItem(){
+        try{
+            for (int i = itemList.size() - 1; i>=0 ; i--){
+                Item item = itemList.get(i);
+                if (item.isSelected()){
+                    db.deleteSelectedItem(item.getName(),this);
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(this,"Error deleting item", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void onItemDelete(String itemName){
+        for (int i = itemList.size() - 1 ; i >= 0; i--){
+            if(itemList.get(i).getName().equals(itemName)){
+                itemList.remove(i);
+                break;
+            }
+        }
+        itemListAdapter.notifyDataSetChanged();
     }
 
     /**
