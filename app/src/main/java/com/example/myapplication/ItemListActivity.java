@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,14 +20,17 @@ import java.util.ArrayList;
 public class ItemListActivity extends AppCompatActivity
         implements DataBase.ItemListUpdateListener,
         AddItemFragment.AddItemInteractionInterface,
-        EditItemFragment.EditItemInteractionInterface{
+        EditItemFragment.EditItemInteractionInterface,
+        SortFilterFragment.SortFilterInteractionInterface{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
 
     private Button addItemButton;
+    private Button sortFilterButton;
     private DataBase db; //Source of item list
     private int clickedItemIndex; // Index of item that is recently clicked on
+    private ArrayList<Item> visibleItems;
 
 
     /**
@@ -45,11 +49,13 @@ public class ItemListActivity extends AppCompatActivity
         db = new DataBase("Adi", this);
 
         addItemButton = findViewById(R.id.add_item_button);
+        sortFilterButton = findViewById(R.id.sort_filter_button);
+        visibleItems = db.getItemList();
 
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
         itemListView.setLayoutManager(new LinearLayoutManager(this));
-        itemListAdapter = new ItemArrayAdapter(this, db.getItemList(), new ItemArrayAdapter.OnItemClickListener() {
+        itemListAdapter = new ItemArrayAdapter(this, visibleItems, new ItemArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Item item, int position) {
                 clickedItemIndex = position;
@@ -61,13 +67,19 @@ public class ItemListActivity extends AppCompatActivity
         itemListView.setAdapter(itemListAdapter);
 
         //Set the total value
-        Double total = calculateTotal(db.getItemList());
+        Double total = calculateTotal(visibleItems);
         updateTotalBox(total);
 
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
+            }
+        });
+        sortFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new SortFilterFragment().show(getSupportFragmentManager(), "Sort_Filter");
             }
         });
     }
@@ -81,7 +93,7 @@ public class ItemListActivity extends AppCompatActivity
         itemListAdapter.notifyDataSetChanged();
 
         //Update the total value
-        Double total = calculateTotal(db.getItemList());
+        Double total = calculateTotal(visibleItems);
         updateTotalBox(total);
     }
 
@@ -125,10 +137,18 @@ public class ItemListActivity extends AppCompatActivity
     @Override
     public void EditFragmentOKPressed(Item item) {
         // Remove the existing outdated item from DB
-        db.deleteItem(db.getItemList().get(clickedItemIndex));
+        db.deleteItem(visibleItems.get(clickedItemIndex));
 
         // Add the updated item to DB
         db.addItem(item);
+    }
+
+    @Override
+    public void SortFilterFragmentOKPressed(int sort_option, boolean ascending, int filter_option) {
+        Log.d("INMAIN", ""+sort_option+" "+ascending);
+        visibleItems = SorterFilterer.sort_and_filter(db.getItemList(),sort_option,ascending,filter_option);
+        onItemListUpdate();
+
     }
 }
 
