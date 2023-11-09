@@ -32,6 +32,11 @@ public class ItemListActivity extends AppCompatActivity
     private int clickedItemIndex; // Index of item that is recently clicked on
     private ArrayList<Item> visibleItems;
 
+    // MOST RECENT SORT OPTIONS
+    int sort_option = R.id.value_sort_button;
+    boolean ascending = false;
+    int filter_option = 0;
+
 
     /**
      * When activity is created, setup database and user's items
@@ -89,6 +94,11 @@ public class ItemListActivity extends AppCompatActivity
      * This can happen due to factors internal or external to this application.
      */
     public void onItemListUpdate(){
+        Log.d("INMAIN", ""+sort_option+" "+ascending);
+
+        // KEEP VISIBLE ITEMS SORTED WITH MOST RECENT SORTING CHOICES
+        visibleItems = SorterFilterer.sort_and_filter(db.getItemList(),sort_option,ascending,filter_option);
+
         //Update the items shown on the screen
         itemListAdapter.notifyDataSetChanged();
 
@@ -127,6 +137,10 @@ public class ItemListActivity extends AppCompatActivity
     @Override
     public void AddFragmentOKPressed(Item item) {
         db.addItem(item);
+
+        Log.d("xxx sort-option", String.format("%s",sort_option));
+        Log.d("xxx ascending", String.format("%s",ascending));
+        Log.d("filter-option", String.format("%s",filter_option));
     }
 
     /**
@@ -138,17 +152,27 @@ public class ItemListActivity extends AppCompatActivity
     public void EditFragmentOKPressed(Item item) {
         // Remove the existing outdated item from DB
         db.deleteItem(visibleItems.get(clickedItemIndex));
+        Log.d("xxx sort-option", String.format("%s",sort_option));
+        Log.d("xxx ascending", String.format("%s",ascending));
+        Log.d("filter-option", String.format("%s",filter_option));
 
         // Add the updated item to DB
         db.addItem(item);
+        Log.d("xxx sort-option", String.format("%s",sort_option));
+        Log.d("xxx ascending", String.format("%s",ascending));
+        Log.d("filter-option", String.format("%s",filter_option));
     }
 
     @Override
     public void SortFilterFragmentOKPressed(int sort_option, boolean ascending, int filter_option) {
-        Log.d("INMAIN", ""+sort_option+" "+ascending);
-        visibleItems = SorterFilterer.sort_and_filter(db.getItemList(),sort_option,ascending,filter_option);
-        onItemListUpdate();
+        // SAVE THE MOST RECENT SORT/FILTER OPTIONS
+        // ADD AND EDIT FEATURE CAN USE THIS
+        this.sort_option = sort_option;
+        this.ascending = ascending;
+        this.filter_option = 0;
 
+        // THIS WILL ALSO APPLY THE MOST RECENT SORTING/FILTERING OPTIONS TO VISIBLE LIST
+        onItemListUpdate();
     }
 }
 
