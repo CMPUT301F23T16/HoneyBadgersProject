@@ -99,11 +99,11 @@ public class DataBase {
 
     }
 
-    public void deleteSelectedItem(String itemName, ItemListActivity context) {
-        itemsRef.document(itemName).delete()
+    public void deleteSelectedItem(String itemId, ItemListActivity context) {
+        itemsRef.document(itemId).delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
-                    context.onItemDelete(itemName);
+                    context.onItemDelete(itemId);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(context, "Failed to Delete item(s)", Toast.LENGTH_SHORT).show();

@@ -1,15 +1,20 @@
 package com.example.myapplication;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +44,7 @@ public class ItemListActivity extends AppCompatActivity
     private Button addItemButton;
     private Button deleteItemButton;
 
+
     private int clickedItemIndex; // Index of item that is recently clicked on
 
     /**
@@ -48,6 +54,7 @@ public class ItemListActivity extends AppCompatActivity
      *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
      *
      */
+    @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +104,7 @@ public class ItemListActivity extends AppCompatActivity
                 .setTitle("Confirm Delete")
                 .setMessage("Are you sure you want to delete the selected item(s)?")
                 .setPositiveButton("Delete", (dialogInterface, which) -> {
-                    deleteSelectedItem();
+                    deleteSelItem();
                     finish();
                 })
                 .setNegativeButton("Cancel", null)
@@ -110,25 +117,30 @@ public class ItemListActivity extends AppCompatActivity
         dialog.show();
     }
 
-    private void deleteSelectedItem(){
-        try{
-            for (int i = itemList.size() - 1; i>=0 ; i--){
-                Item item = itemList.get(i);
-                if (item.isSelected()){
-                    db.deleteSelectedItem(item.getName(),this);
-                }
+    private void deleteSelItem() {
+        // Use a List to keep track of items to delete to avoid ConcurrentModificationException
+        List<Item> itemsToDelete = new ArrayList<>();
+
+        for (Item item : itemList) {
+            if (item.isSelected()) {
+                itemsToDelete.add(item);
             }
         }
-        catch(Exception e){
-            e.printStackTrace();
-            Toast.makeText(this,"Error deleting item", Toast.LENGTH_SHORT).show();
-        }
 
+        // Delete the selected items from the database
+        try {
+            for (Item item : itemsToDelete) {
+                db.deleteSelectedItem(item.getId(), this);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error deleting item", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    public void onItemDelete(String itemName){
+    public void onItemDelete(String itemId){
         for (int i = itemList.size() - 1 ; i >= 0; i--){
-            if(itemList.get(i).getName().equals(itemName)){
+            if(itemList.get(i).getId().equals(itemId)){
                 itemList.remove(i);
                 break;
             }

@@ -26,6 +26,7 @@ public class Item implements Serializable {
     private String serial;
     private String comment;
     private String tag;
+    private String id;
     private boolean isSelected = false;
 
     public void setName(String name) {
@@ -190,9 +191,21 @@ public class Item implements Serializable {
     }
 
 
-    public Item(String name){
+    public Item(String id, String name){
         this.name = name;
-        this.isSelected = false;
+        this.id = id;
+    }
+
+    public Item(String id){
+        this.id = id;
+        this.isSelected = isSelected();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
-

@@ -119,12 +119,6 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             itemPrice = itemView.findViewById(R.id.item).findViewById(R.id.item_price);
             itemSelected = itemView.findViewById(R.id.check_box);
 
-//            itemSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//                int adapterPosition = getAdapterPosition();
-//                if (adapterPosition != RecyclerView.NO_POSITION){
-//                    items.get(adapterPosition).setSelected(isChecked);
-//                }
-//            });
         }
 
         /**
