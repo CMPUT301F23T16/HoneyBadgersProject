@@ -52,7 +52,7 @@ public class SortFilterFragment extends DialogFragment {
         ascending = view.findViewById(R.id.sortToggleButton);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
-                .setTitle("Add/edit item")
+                .setTitle("Sort/filter item")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
                     @Override
