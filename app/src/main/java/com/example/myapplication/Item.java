@@ -159,7 +159,6 @@ public class Item implements Serializable {
      */
 
     public String getDateAdded() {
-
         return this.dateAdded;
     }
 

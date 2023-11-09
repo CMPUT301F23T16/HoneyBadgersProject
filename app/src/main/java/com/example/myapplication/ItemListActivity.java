@@ -13,7 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.firebase.firestore.CollectionReference;
+
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +28,18 @@ import java.util.List;
 
 public class ItemListActivity extends AppCompatActivity
         implements DataBase.ItemListUpdateListener,
-        AddItemFragment.AddItemInteractionInterface {
+        AddItemFragment.AddItemInteractionInterface,
+        EditItemFragment.EditItemInteractionInterface{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
     private DataBase db; //Source of item list
+
     private List<Item> itemList;
     private Button addItemButton;
     private Button deleteItemButton;
 
+    private int clickedItemIndex; // Index of item that is recently clicked on
 
     /**
      * When activity is created, setup database and user's items
@@ -57,12 +63,20 @@ public class ItemListActivity extends AppCompatActivity
             deleteConfirmDialog();
         });
 
+
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
         itemListView.setLayoutManager(new LinearLayoutManager(this));
-        itemListAdapter = new ItemArrayAdapter(this, db.getItemList());
-        itemListView.setAdapter(itemListAdapter);
+        itemListAdapter = new ItemArrayAdapter(this, db.getItemList(), new ItemArrayAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Item item, int position) {
+                clickedItemIndex = position;
+                EditItemFragment.newInstance(item).show(getSupportFragmentManager(), "Edit Item");
+            }
+        });
 
+
+        itemListView.setAdapter(itemListAdapter);
 
         //Set the total value
         Double total = calculateTotal(db.getItemList());
@@ -120,6 +134,7 @@ public class ItemListActivity extends AppCompatActivity
             }
         }
         itemListAdapter.notifyDataSetChanged();
+
     }
 
     /**
@@ -127,7 +142,6 @@ public class ItemListActivity extends AppCompatActivity
      * This can happen due to factors internal or external to this application.
      */
     public void onItemListUpdate(){
-
         //Update the items shown on the screen
         itemListAdapter.notifyDataSetChanged();
 
@@ -159,8 +173,26 @@ public class ItemListActivity extends AppCompatActivity
         totalBox.setText(String.format("$%.2f", total));
     }
 
+    /**
+     * Adds the item received from the AddItemFragment to the user's item collection in DB
+     * @param item item to be added to users item collection in DB
+     */
     @Override
     public void AddFragmentOKPressed(Item item) {
+        db.addItem(item);
+    }
+
+    /**
+     * Updates an item in the user's item collection (in DB)
+     *      using updated item received from EditItemFragment
+     * @param item item to be replaced in the user's item collection in DB
+     */
+    @Override
+    public void EditFragmentOKPressed(Item item) {
+        // Remove the existing outdated item from DB
+        db.deleteItem(db.getItemList().get(clickedItemIndex));
+
+        // Add the updated item to DB
         db.addItem(item);
     }
 }

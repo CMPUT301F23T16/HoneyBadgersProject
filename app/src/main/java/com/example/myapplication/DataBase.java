@@ -21,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.time.format.DateTimeFormatter;
+
 
 
 /**This class represents the cloud database the app is connecting to.
@@ -31,7 +33,7 @@ public class DataBase {
     private ArrayList<Item> itemList;
     private CollectionReference itemsRef;
 
-    public DataBase(String userName){
+    public DataBase(String userName) {
         this.db = FirebaseFirestore.getInstance();
         this.itemsRef = db.collection(userName);
     }
@@ -39,8 +41,9 @@ public class DataBase {
     /**
      * Connect to the database and get the user's collection. Setup automatic
      * updates from database
+     *
      * @param userName This is the username of the user
-     * @param context Parent object
+     * @param context  Parent object
      */
     public DataBase(String userName, ItemListActivity context) {
         this.itemList = new ArrayList<>();
@@ -62,7 +65,7 @@ public class DataBase {
                 if (querySnapshots != null) {
                     itemList.clear();
                     //For each item in the cloud db, add it to the list
-                    for (QueryDocumentSnapshot doc: querySnapshots) {
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
 
                         String name = doc.getId();
                         Date date;
@@ -96,7 +99,7 @@ public class DataBase {
 
     }
 
-    public void deleteSelectedItem(String itemName, ItemListActivity context){
+    public void deleteSelectedItem(String itemName, ItemListActivity context) {
         itemsRef.document(itemName).delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
@@ -109,6 +112,7 @@ public class DataBase {
 
     /**
      * itemList getter
+     *
      * @return list containing all items in database.
      * This will be updated automatically as the list changes
      */
@@ -116,9 +120,23 @@ public class DataBase {
         return itemList;
     }
 
-    public void addItem(Item item){
-//        itemList.add(item);
+
+    /**
+     * Function adds the input item to the database
+     *
+     * @param item Item to be added to the user's item collection in the database
+     */
+    public void addItem(Item item) {
         itemsRef.document(item.getName()).set(item);
+    }
+
+    /**
+     * Function deletes the input item to the database
+     *
+     * @param item Item to be deleted from the user's item collection in the database
+     */
+    public void deleteItem(Item item) {
+        itemsRef.document(item.getName()).delete();
     }
 
     /**
@@ -131,3 +149,4 @@ public class DataBase {
         public void onItemListUpdate();
     }
 }
+
