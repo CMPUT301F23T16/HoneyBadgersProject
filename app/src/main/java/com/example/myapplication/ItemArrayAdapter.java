@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     public interface OnItemClickListener {
         void onItemClick(Item item, int position);
     }
+
     private ArrayList<Item> items;
     private Context context;
     private final OnItemClickListener listener;
@@ -32,8 +34,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
 
     /**
      * Initializes class members only
+     *
      * @param context parent object
-     * @param items list of items
+     * @param items   list of items
      */
     public ItemArrayAdapter(Context context, ArrayList<Item> items, OnItemClickListener listener) {
         this.items = items;
@@ -42,11 +45,22 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     }
 
     /**
+     * This will unselect the checkboxes once the delete functionality is implemented/ dialog box closes
+     */
+    public void unSelectCheckBox(){
+        for (Item i : items){
+
+            i.setSelected(false);
+        }
+        notifyDataSetChanged();
+    }
+
+    /**
      * Inflates item_content
-     * @param parent The ViewGroup into which the new View will be added after it is bound to
-     *               an adapter position.
-     * @param viewType The view type of the new View.
      *
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
+     * @param viewType The view type of the new View.
      * @return item_content view holder
      */
     @NonNull
@@ -58,8 +72,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
 
     /**
      * Populates the details of each item in the textViews
-     * @param holder The ViewHolder which should be updated to represent the contents of the
-     *        item at the given position in the data set.
+     *
+     * @param holder   The ViewHolder which should be updated to represent the contents of the
+     *                 item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
     @Override
@@ -67,12 +82,22 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         Item item = items.get(position);
         ItemContentViewHolder itemContent = (ItemContentViewHolder) holder;
 
-        // This calls the bind function to populate the values of each View of the Item
-        itemContent.bind(items.get(position), position, listener);
+        //Set the TextView text for the item
+        itemContent.itemName.setText(item.getName());
+        itemContent.itemDateAdded.setText(item.getDateAdded().toString());
+        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
+        itemContent.itemSelected.setChecked(item.isSelected());
+
+
+        itemContent.itemSelected.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            items.get(itemContent.getAdapterPosition()).setSelected(isChecked);
+        }));
+
     }
 
     /**
      * Counts the number of items in items list
+     *
      * @return number of items in items list
      */
     @Override
@@ -83,14 +108,16 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     /**
      * This class maps each text view (item attribute) in item_content to its attributes
      */
-    public class ItemContentViewHolder extends RecyclerView.ViewHolder{
+    public class ItemContentViewHolder extends RecyclerView.ViewHolder {
         TextView itemName;
         TextView itemDateAdded;
         TextView itemPrice;
+        CheckBox itemSelected;
 
 
         /**
          * Initializes all text views in class
+         *
          * @param itemView view holding all the items list screen item attributes
          */
         public ItemContentViewHolder(View itemView) {
@@ -99,12 +126,20 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             itemName = itemView.findViewById(R.id.item).findViewById(R.id.item_name);
             itemDateAdded = itemView.findViewById(R.id.item).findViewById(R.id.item_date);
             itemPrice = itemView.findViewById(R.id.item).findViewById(R.id.item_price);
+            itemSelected = itemView.findViewById(R.id.check_box);
 
+            itemSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                int adapterPosition = getAdapterPosition();
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    items.get(adapterPosition).setSelected(isChecked);
+                }
+            });
         }
 
         /**
          * Populates all fields in the item's content layout with proper values
-         * @param item Item object that will be used to populate text views for the current item
+         *
+         * @param item     Item object that will be used to populate text views for the current item
          * @param position Index of the item Object in the datalist/ArrayAdapter
          * @param listener listener object that will provide onClick functionality to each
          *                 item in recyler view
@@ -118,12 +153,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             itemPrice.setText(String.format("$%.2f", item.getPrice()));
 
             itemView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
+                @Override
+                public void onClick(View v) {
                     listener.onItemClick(item, position);
                 }
             });
         }
     }
-
 }
-
