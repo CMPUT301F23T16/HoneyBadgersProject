@@ -26,6 +26,8 @@ public class Item implements Serializable {
     private String serial;
     private String comment;
     private String tag;
+    private String id;
+    private boolean isSelected = false;
 
     public void setName(String name) {
         this.name = name;
@@ -114,6 +116,7 @@ public class Item implements Serializable {
      * @param price This is the price of the item
      */
     public Item(String name, double price) {
+
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
         String strDate = dateFormat.format(new Date());
 
@@ -154,6 +157,7 @@ public class Item implements Serializable {
      * getter for date added
      * @return The addition date of the item
      */
+
     public String getDateAdded() {
         return this.dateAdded;
     }
@@ -164,5 +168,43 @@ public class Item implements Serializable {
      */
     public Double getPrice() {
         return this.price;
+    }
+
+    //constructor required for Firestore
+    public Item(){}
+
+    /**
+     * getter for isSelected to verify if the checkbox of an item is selected or not
+     * @return The value of isSelected which can be either true or false
+     */
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    /**
+     * setter for isSelected
+     * @param selected
+     */
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+
+    /**
+     * This constructor is used when item(s) has to be deleted
+     * @param name This is the name of item
+     */
+    public Item(String name){
+
+        this.name = name;
+        this.isSelected = isSelected();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
