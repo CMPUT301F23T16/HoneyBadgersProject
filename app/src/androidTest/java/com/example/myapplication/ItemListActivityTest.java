@@ -5,10 +5,13 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.IsNot.not;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.IdlingResource;
@@ -53,6 +56,15 @@ public class ItemListActivityTest {
         // Check that the total is correct
         onView(withId(R.id.total_amount)).check(matches(withText("$12402.00")));
 
+        // Click the checkbox next to "Bed"
+        onView(allOf(withId(R.id.check_box), hasSibling(withText("Bed"))))
+                .perform(click());
+
+        // There is a delete button, click it to delete the selected item
+        onView(withId(R.id.delete_item_button)).perform(click());
+
+        // 4. Check that "Bed" is no longer in the list
+        onView(withId(R.id.item_list)).check(matches(not(hasDescendant(withText("Bed")))));
     }
 
 }

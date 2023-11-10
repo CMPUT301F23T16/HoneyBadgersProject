@@ -186,7 +186,10 @@ public class Item implements Serializable {
         isSelected = selected;
     }
 
-
+    /**
+     * This constructor is used when item(s) has to be deleted
+     * @param name This is the name of item
+     */
     public Item(String name){
         this.name = name;
         this.isSelected = false;

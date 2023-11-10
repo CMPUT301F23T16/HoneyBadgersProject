@@ -42,6 +42,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         this.listener = listener;
     }
 
+    /**
+     * This will unselect the checkboxes once the delete functionality is implemented/ dialog box closes
+     */
     public void unSelectCheckBox(){
         for (Item i : items){
             i.setSelected(false);
