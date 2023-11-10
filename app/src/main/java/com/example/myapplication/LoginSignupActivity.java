@@ -27,9 +27,9 @@ import java.util.Calendar;
 
 
 /**
- * Provides a user interface for both login and signup processes.
- * The user can toggle between the login and signup forms, submit their credentials to sign in,
- * or provide details to create a new account. There are also options to cancel either action.
+ * Activity responsible for handling user login and sign-up operations.
+ * Users can toggle between login and sign-up forms, authenticate to sign in,
+ * or register a new account. Cancellation of actions is also supported.
  */
 public class LoginSignupActivity extends AppCompatActivity {
 
@@ -45,9 +45,11 @@ public class LoginSignupActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 
     /**
-     * Called when the activity is starting. This is where most initialization should go.
-     * @param savedInstanceState If the activity is being re-initialized after previously being shut down
-     *                           then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     * Initializes the activity. This method sets up the user interface
+     * and initializes Firebase instances.
+     *
+     * @param savedInstanceState A Bundle containing the activity's previously saved state.
+     *                           If the activity has never existed before, the value of the Bundle is null.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,10 @@ public class LoginSignupActivity extends AppCompatActivity {
         showLoginForm();
     }
 
+    /**
+     * Called after onCreate(Bundle) — or after onRestart() when the activity had been stopped, but
+     * is now again being displayed to the user. It will be followed by onResume().
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -85,21 +91,28 @@ public class LoginSignupActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows the login form and hides the signup form.
-     * @param view The view that was clicked.
+     * Shows the login form UI and hides the sign-up form UI.
+     *
+     * @param view The UI component that receives the click event.
      */
     public void onLoginClicked(View view) {
         showLoginForm();
     }
 
     /**
-     * Shows the signup form and hides the login form.
-     * @param view The view that was clicked.
+     * Shows the sign-up form UI and hides the login form UI.
+     *
+     * @param view The UI component that receives the click event.
      */
     public void onSignupClicked(View view) {
         showSignupForm();
     }
 
+    /**
+     * Triggers the display of a DatePickerDialog when the date of birth field is clicked.
+     *
+     * @param view The UI component that receives the click event.
+     */
     public void onDateOfBirthClicked(View view) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -119,8 +132,9 @@ public class LoginSignupActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
     /**
-     * Handles the logic when the login form is submitted. Placeholder for actual implementation.
-     * @param view The view that was clicked.
+     * Submits the login form, authenticating the user with email and password.
+     *
+     * @param view The UI component that receives the click event.
      */
     public void onLoginSubmitClicked(View view) {
         EditText loginEmail = findViewById(R.id.loginEmail);
@@ -152,8 +166,9 @@ public class LoginSignupActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the logic when the signup form is submitted. Placeholder for actual implementation.
-     * @param view The view that was clicked.
+     * Submits the sign-up form, registering the user with provided details.
+     *
+     * @param view The UI component that receives the click event.
      */
     public void onSignupSubmitClicked(View view) {
         // Validate input fields are filled
@@ -167,7 +182,8 @@ public class LoginSignupActivity extends AppCompatActivity {
     }
 
     /**
-     * Validates that all signup fields are filled.
+     * Validates if all the required fields in the sign-up form are filled.
+     *
      * @return true if all fields are filled, false otherwise.
      */
     private boolean validateSignupFields() {
@@ -182,7 +198,7 @@ public class LoginSignupActivity extends AppCompatActivity {
     }
 
     /**
-     * Saves the user's data to Firebase Firestore.
+     * Saves the new user's data to Firebase Firestore and creates an authentication account.
      */
     private void saveUserDataToFirebase() {
         String email = signupEmail.getText().toString().trim();
