@@ -44,10 +44,11 @@
             android:layout_below="@id/toggleButtons">
 
             <EditText
-                android:id="@+id/loginUsername"
+                android:id="@+id/loginEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Username"/>
+                android:hint="Email"
+                android:inputType="textEmailAddress"/>
 
             <EditText
                 android:id="@+id/loginPassword"
@@ -101,7 +102,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Date of Birth"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:clickable="true"
+                android:onClick="onDateOfBirthClicked"
+                android:inputType="none"/>
 
             <EditText
                 android:id="@+id/signupUsername"
