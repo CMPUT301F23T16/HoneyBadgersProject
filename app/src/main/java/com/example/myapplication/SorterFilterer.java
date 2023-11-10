@@ -60,9 +60,11 @@ public class SorterFilterer {
     }
     public static ArrayList<Item> filter(ArrayList<Item> list,int filter_option, String date_from, String date_to)
     {
+        Log.d("dj", "filter: HereinFilter");
     // Filter Code Here
         // Filter based on date range
         if (filter_option == R.id.date_from) {
+            Log.d("dj", "filter: HereinFilter");
             ArrayList<Item> filteredList = new ArrayList<>();
             for (Item item : list) {
                 String itemDate = item.getDateAdded();
