@@ -1,16 +1,10 @@
 {
   "project_info": {
-<<<<<<< HEAD
 
     "project_number": "372895179986",
     "project_id": "honeybadgersproject-a46cd",
     "storage_bucket": "honeybadgersproject-a46cd.appspot.com"
 
-=======
-    "project_number": "372895179986",
-    "project_id": "honeybadgersproject-a46cd",
-    "storage_bucket": "honeybadgersproject-a46cd.appspot.com"
->>>>>>> delete_item
   },
   "client": [
     {
@@ -25,13 +19,9 @@
       "oauth_client": [],
       "api_key": [
         {
-<<<<<<< HEAD
 
           "current_key": "AIzaSyAupUvYPXDPx0aCqlt-9HWE3ZCh9R5GRmw"
 
-=======
-          "current_key": "AIzaSyAupUvYPXDPx0aCqlt-9HWE3ZCh9R5GRmw"
->>>>>>> delete_item
         }
       ],
       "services": {
