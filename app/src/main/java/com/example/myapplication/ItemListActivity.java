@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -85,6 +88,13 @@ public class ItemListActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 new SortFilterFragment().show(getSupportFragmentManager(), "Sort_Filter");
+            }
+        });
+        Button logoutButton = findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
             }
         });
     }
@@ -173,6 +183,16 @@ public class ItemListActivity extends AppCompatActivity
 
         // THIS WILL ALSO APPLY THE MOST RECENT SORTING/FILTERING OPTIONS TO VISIBLE LIST
         onItemListUpdate();
+    }
+    private void logout() {
+        FirebaseAuth.getInstance().signOut(); // Firebase sign out
+        navigateToLoginActivity();
+    }
+    private void navigateToLoginActivity() {
+        Intent intent = new Intent(this, LoginSignupActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish(); // Call this when your activity is done and should be closed.
     }
 }
 
