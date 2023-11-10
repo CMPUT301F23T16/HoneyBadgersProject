@@ -81,18 +81,10 @@ public class SorterFilterer {
         return list;
     }
     private static boolean isDateInRange(String itemDate, String date_from, String date_to) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateItem = sdf.parse(itemDate);
-            Date dateFrom = sdf.parse(date_from);
-            Date dateTo = sdf.parse(date_to);
 
-            // Check if the item's date is within the specified range
-            return dateItem.compareTo(dateFrom) >= 0 && dateItem.compareTo(dateTo) <= 0;
-        } catch (ParseException e) {
-            Log.e("SorterFilterer", "Error parsing dates", e);
-            return false;
-        }
+
+        // Check if the item's date is within the specified range
+        return itemDate.compareTo(date_from) >= 0 && itemDate.compareTo(date_to) <= 0;
     }
 
 }
