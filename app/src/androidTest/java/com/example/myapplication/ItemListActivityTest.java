@@ -35,6 +35,8 @@ public class ItemListActivityTest {
     private IdlingResource idlingResource = new CountingIdlingResource("API Idling Resource");
 
     @Test
+    @Deprecated // AddItemFragmentTest tests whether screen has items now. Running this test will
+    // Likely fail due to a lack of mocks.
     public void testItemListActivity() throws InterruptedException {
         //TODO will need to setup mocks for this but this is fine for now
 
