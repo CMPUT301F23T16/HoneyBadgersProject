@@ -37,6 +37,9 @@ public class ItemListActivity extends AppCompatActivity
     boolean ascending = false;
     int filter_option = 0;
 
+    private String date_from;
+    private String date_to;
+
 
     /**
      * When activity is created, setup database and user's items
@@ -97,7 +100,7 @@ public class ItemListActivity extends AppCompatActivity
         Log.d("INMAIN", ""+sort_option+" "+ascending);
 
         // KEEP VISIBLE ITEMS SORTED WITH MOST RECENT SORTING CHOICES
-        visibleItems = SorterFilterer.sort_and_filter(db.getItemList(),sort_option,ascending,filter_option);
+        visibleItems = SorterFilterer.sort_and_filter(db.getItemList(),sort_option,ascending,filter_option, date_from, date_to);
 
         //Update the items shown on the screen
         itemListAdapter.notifyDataSetChanged();
@@ -164,7 +167,7 @@ public class ItemListActivity extends AppCompatActivity
     }
 
     @Override
-    public void SortFilterFragmentOKPressed(int sort_option, boolean ascending, int filter_option) {
+    public void SortFilterFragmentOKPressed(int sort_option, boolean ascending, int filter_option, String date_from, String date_to) {
         // SAVE THE MOST RECENT SORT/FILTER OPTIONS
         // ADD AND EDIT FEATURE CAN USE THIS
         this.sort_option = sort_option;
