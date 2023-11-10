@@ -83,9 +83,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         ItemContentViewHolder itemContent = (ItemContentViewHolder) holder;
 
         //Set the TextView text for the item
-        itemContent.itemName.setText(item.getName());
-        itemContent.itemDateAdded.setText(item.getDateAdded().toString());
-        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
+        itemContent.bind(item, position, listener);
+
+//        itemContent.itemName.setText(item.getName());
+//        itemContent.itemDateAdded.setText(item.getDateAdded().toString());
+//        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
         itemContent.itemSelected.setChecked(item.isSelected());
 
 

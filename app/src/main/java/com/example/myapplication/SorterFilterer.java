@@ -1,4 +1,7 @@
 package com.example.myapplication;
+/**
+ * This class provides methods for sorting and filtering a list of items.
+ */
 
 import android.util.Log;
 
@@ -10,12 +13,31 @@ import java.text.ParseException;
 import java.util.Date;
 
 public class SorterFilterer {
+    /**
+     * Sorts and filters the given list of items based on specified criteria.
+     *
+     * @param list           The list of items to be sorted and filtered.
+     * @param sortingOption  The sorting option (e.g., R.id.date_sort_button).
+     * @param ascending      True if sorting should be in ascending order, false otherwise.
+     * @param filterOption   The filter option (e.g., R.id.date_from).
+     * @param dateFrom       The starting date for filtering.
+     * @param dateTo         The ending date for filtering.
+     * @return               The sorted and filtered list of items.
+     */
     public static ArrayList<Item> sort_and_filter(ArrayList<Item> list,int sorting_option,boolean ascending, int filter_option, String date_from, String date_to)
     {
         Log.d("INSORTER", ""+sorting_option+" "+ascending);
 
         return filter(sort(list,sorting_option,ascending),filter_option, date_from, date_to);
     }
+    /**
+     * Sorts the given list of items based on specified criteria.
+     *
+     * @param list           The list of items to be sorted.
+     * @param sortingOption  The sorting option (e.g., R.id.date_sort_button).
+     * @param ascending      True if sorting should be in ascending order, false otherwise.
+     * @return               The sorted list of items.
+     */
     public static ArrayList<Item> sort(ArrayList<Item> list,int sorting_option,boolean ascending)
     {
         Log.d("Checker", ""+sorting_option+" "+R.id.value_sort_button);
@@ -58,11 +80,22 @@ public class SorterFilterer {
         return list;
 
     }
+    /**
+     * Filters the given list of items based on specified criteria.
+     *
+     * @param list           The list of items to be filtered.
+     * @param filterOption   The filter option (e.g., R.id.date_from).
+     * @param dateFrom       The starting date for filtering.
+     * @param dateTo         The ending date for filtering.
+     * @return               The filtered list of items.
+     */
     public static ArrayList<Item> filter(ArrayList<Item> list,int filter_option, String date_from, String date_to)
     {
+        Log.d("dj", "filter: HereinFilter");
     // Filter Code Here
         // Filter based on date range
         if (filter_option == R.id.date_from) {
+            Log.d("dj", "filter: HereinFilter");
             ArrayList<Item> filteredList = new ArrayList<>();
             for (Item item : list) {
                 String itemDate = item.getDateAdded();
@@ -79,18 +112,10 @@ public class SorterFilterer {
         return list;
     }
     private static boolean isDateInRange(String itemDate, String date_from, String date_to) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateItem = sdf.parse(itemDate);
-            Date dateFrom = sdf.parse(date_from);
-            Date dateTo = sdf.parse(date_to);
 
-            // Check if the item's date is within the specified range
-            return dateItem.compareTo(dateFrom) >= 0 && dateItem.compareTo(dateTo) <= 0;
-        } catch (ParseException e) {
-            Log.e("SorterFilterer", "Error parsing dates", e);
-            return false;
-        }
+
+        // Check if the item's date is within the specified range
+        return itemDate.compareTo(date_from) >= 0 && itemDate.compareTo(date_to) <= 0;
     }
 
 }

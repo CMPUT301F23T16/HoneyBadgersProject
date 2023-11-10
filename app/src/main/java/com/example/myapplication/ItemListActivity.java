@@ -203,6 +203,8 @@ public class ItemListActivity extends AppCompatActivity
             totalPrice += i.getPrice();
         }
         return totalPrice;
+
+
     }
 
     /**
@@ -247,13 +249,21 @@ public class ItemListActivity extends AppCompatActivity
         Log.d("filter-option", String.format("%s",filter_option));
     }
 
+    /**
+     * Sorts the visible item list using sort options received from the SortFilterFragment
+     * @param sort_option whether to sort by date, value, description or name
+     * @param ascending Whether to sort in ascending or descending order
+     * @param filter_option not implemented yet
+     */
     @Override
     public void SortFilterFragmentOKPressed(int sort_option, boolean ascending, int filter_option, String date_from, String date_to) {
         // SAVE THE MOST RECENT SORT/FILTER OPTIONS
         // ADD AND EDIT FEATURE CAN USE THIS
         this.sort_option = sort_option;
         this.ascending = ascending;
-        this.filter_option = 0;
+        this.filter_option = filter_option;
+        this.date_from = date_from;
+        this.date_to =date_to;
 
         // THIS WILL ALSO APPLY THE MOST RECENT SORTING/FILTERING OPTIONS TO VISIBLE LIST
         onItemListUpdate();

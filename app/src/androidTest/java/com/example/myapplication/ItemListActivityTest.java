@@ -2,9 +2,11 @@ package com.example.myapplication;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -21,6 +23,9 @@ import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +33,9 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ItemListActivityTest {
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference itemsRef = db.collection("Adi");
     @Rule
     public IntentsTestRule<ItemListActivity> activityRule = new
             IntentsTestRule<>(ItemListActivity.class);
@@ -35,7 +43,7 @@ public class ItemListActivityTest {
     private IdlingResource idlingResource = new CountingIdlingResource("API Idling Resource");
 
     @Test
-    public void testItemListActivity() throws InterruptedException {
+    public void test_1_check_list_view_item() throws InterruptedException {
         //TODO will need to setup mocks for this but this is fine for now
 
         //The database's API takes some time to return the data.
@@ -43,12 +51,12 @@ public class ItemListActivityTest {
         //TODO ideally something which specifically waits for the response would be used
         Thread.sleep(1000);
 
-        // Check if Guitar item is present
+        // Check if Chair item is present
         onView(withText("Chair")).check(matches(isDisplayed()));
         onView(withText("2023-11-01")).check(matches(isDisplayed()));
         onView(withText("$12342.00")).check(matches(isDisplayed()));
 
-        // Check if TV item is present
+        // Check if Bed item is present
         onView(withText("Bed")).check(matches(isDisplayed()));
         onView(withText("2023-11-03")).check(matches(isDisplayed()));
         onView(withText("$60.00")).check(matches(isDisplayed()));
@@ -57,14 +65,15 @@ public class ItemListActivityTest {
         onView(withId(R.id.total_amount)).check(matches(withText("$12402.00")));
 
         // Click the checkbox next to "Bed"
-        onView(allOf(withId(R.id.check_box), hasSibling(withText("Bed"))))
-                .perform(click());
+        onView(allOf(withId(R.id.check_box), hasSibling(withText("Bed")))).perform(click());
 
         // There is a delete button, click it to delete the selected item
         onView(withId(R.id.delete_item_button)).perform(click());
 
-        // 4. Check that "Bed" is no longer in the list
+        // 'DELETE' is the text on the button
+        onView(withText("DELETE")).inRoot(isDialog()).check(matches(isDisplayed())).perform(click());
+
+        // Check that "Bed" is no longer in the list
         onView(withId(R.id.item_list)).check(matches(not(hasDescendant(withText("Bed")))));
     }
-
 }

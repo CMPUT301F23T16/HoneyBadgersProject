@@ -26,6 +26,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
+/**
+ * Class encapsulates business logic for the AddItemFragment
+ */
 public class AddItemFragment extends DialogFragment {
     private EditText itemName;
     private TextView purchaseDate;
@@ -39,6 +42,11 @@ public class AddItemFragment extends DialogFragment {
 
     private DatePickerDialog datePickerDialog;
     private AddItemInteractionInterface listener;
+
+    /**
+     * This method is attaches the Activity to an attribute of the fragment
+     * @param context this is the context of the activity that the fragment will be attached to
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -50,10 +58,21 @@ public class AddItemFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Interface used to attach an activity to this Fragment
+     * Enables methods defined in activity to be used in the fragment
+     */
     public interface AddItemInteractionInterface {
         void AddFragmentOKPressed(Item item);
     }
 
+    /**
+     * Function encapsulates the logic behind all components in the AddItemFrament that will show up
+     *      as a dialogue. It is executed when the Fragment pops up
+     * @param savedInstanceState If the fragment is being re-initialized after
+     *      previously being shut down then this Bundle contains the data it most
+     *      recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -101,7 +120,6 @@ public class AddItemFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
                 .setTitle("Add/edit item")
-                .setNegativeButton("Photos", null)
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
