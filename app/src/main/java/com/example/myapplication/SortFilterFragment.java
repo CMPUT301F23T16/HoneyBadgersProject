@@ -1,5 +1,7 @@
 package com.example.myapplication;
-
+/**
+ * This class represents a fragment that allows users to sort and filter items based different criteria
+*/
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -24,9 +26,21 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
+
 public class SortFilterFragment extends DialogFragment {
+    /**
+     * This is an interface for communication between the fragment and its host activity.
+     */
     private SortFilterInteractionInterface listener;
     public interface SortFilterInteractionInterface {
+        /**
+         * This is called when the user presses the "OK" button after selecting their sorting and filtering options.
+         *  @param sortOption   The selected sorting option (e.g., date, description, make, value).
+         *  @param ascending    True if sorting should be in ascending order, false otherwise.
+         *  @param filterOption The selected filter option (not yet implemented in this example).
+         *  @param dateFrom      The starting date for filtering (if applicable).
+         *  @param dateTo        The ending date for filtering (if applicable).
+         */
         void SortFilterFragmentOKPressed(int sort_option,boolean asc,int filter_option, String date_from, String date_to);
     }
     private RadioGroup sorting_criteria_rg;
@@ -37,6 +51,11 @@ public class SortFilterFragment extends DialogFragment {
     private EditText description;
     private EditText make;
     private ToggleButton ascending;
+    /**
+     * Called when the fragment is attached to an activity.
+     *
+     * @param context The context to which the fragment is attached.
+     */
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof SortFilterInteractionInterface) {
@@ -46,7 +65,12 @@ public class SortFilterFragment extends DialogFragment {
             throw new RuntimeException(context.toString() + "SortFilterInteractionInterface is not implemented");
         }
     }
-
+    /**
+     * Called to create the dialog displayed by this fragment.
+     *
+     * @param savedInstanceState If the fragment is being re-created from a previous saved state, this is the state.
+     * @return A new Dialog instance.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
