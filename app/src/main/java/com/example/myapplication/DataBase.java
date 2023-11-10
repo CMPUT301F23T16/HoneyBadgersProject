@@ -100,7 +100,6 @@ public class DataBase {
         itemsRef.document(itemName).delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
-                    context.onItemDelete(itemName);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(context, "Failed to Delete item(s)", Toast.LENGTH_SHORT).show();

@@ -71,16 +71,6 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         itemContent.itemPrice.setText(item.getPrice().toString());
         itemContent.itemSelected.setChecked(item.isSelected());
 
-        itemContent.itemSelected.setOnCheckedChangeListener(((buttonView, isChecked) -> {
-            items.get(itemContent.getAdapterPosition()).setSelected(isChecked);
-        }));
-
-//        itemContent.itemView.setOnClickListener(v -> {
-//            boolean isSelected = item.isSelected();
-//            item.setSelected(!isSelected);
-//            itemContent.itemSelected.setChecked(!isSelected);
-//        });
-
     }
 
     /**
@@ -122,12 +112,12 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             itemPrice = itemView.findViewById(R.id.item).findViewById(R.id.item_price);
             itemSelected = itemView.findViewById(R.id.check_box);
 
-//            itemSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//                int adapterPosition = getAdapterPosition();
-//                if (adapterPosition != RecyclerView.NO_POSITION){
-//                    items.get(adapterPosition).setSelected(isChecked);
-//                }
-//            });
+            itemSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                int adapterPosition = getAdapterPosition();
+                if (adapterPosition != RecyclerView.NO_POSITION){
+                    items.get(adapterPosition).setSelected(isChecked);
+                }
+            });
         }
     }
 }

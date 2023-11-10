@@ -30,7 +30,6 @@ public class ItemListActivity extends AppCompatActivity
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
     private DataBase db; //Source of item list
-    private List<Item> itemList;
     private Button addItemButton;
     private Button deleteItemButton;
 
@@ -83,8 +82,7 @@ public class ItemListActivity extends AppCompatActivity
                 .setTitle("Confirm Delete")
                 .setMessage("Are you sure you want to delete the selected item(s)?")
                 .setPositiveButton("Delete", (dialogInterface, which) -> {
-                    deleteSelectedItem();
-                    finish();
+                    deleteSelectedItems();
                 })
                 .setNegativeButton("Cancel", null)
                 .create();
@@ -96,8 +94,9 @@ public class ItemListActivity extends AppCompatActivity
         dialog.show();
     }
 
-    private void deleteSelectedItem(){
+    private void deleteSelectedItems(){
         try{
+            ArrayList<Item> itemList = db.getItemList();
             for (int i = itemList.size() - 1; i>=0 ; i--){
                 Item item = itemList.get(i);
                 if (item.isSelected()){
@@ -112,15 +111,6 @@ public class ItemListActivity extends AppCompatActivity
 
     }
 
-    public void onItemDelete(String itemName){
-        for (int i = itemList.size() - 1 ; i >= 0; i--){
-            if(itemList.get(i).getName().equals(itemName)){
-                itemList.remove(i);
-                break;
-            }
-        }
-        itemListAdapter.notifyDataSetChanged();
-    }
 
     /**
      * Updates the screen when the itemList is changed in teh database.
