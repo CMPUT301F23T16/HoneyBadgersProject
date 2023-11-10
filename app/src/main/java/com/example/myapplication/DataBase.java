@@ -99,12 +99,21 @@ public class DataBase {
 
     }
 
-    public void deleteSelectedItem(String itemId, ItemListActivity context) {
-        itemsRef.document(itemId).delete()
+    /**
+     * This will delete an item from Firestore database
+     * @param itemName The name os the item which is to be deleted
+     * @param context The context from which this method is called, typically the current Activity.
+     */
+    public void deleteSelectedItem(String itemName, ItemListActivity context){
+        itemsRef.document(itemName).delete()
+                //This will be executed if the document deletion is successful.
+
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
 
                 })
+
+                //This will be executed if the document deletion fails.
                 .addOnFailureListener(e -> {
                     Toast.makeText(context, "Failed to Delete item(s)", Toast.LENGTH_SHORT).show();
                 });

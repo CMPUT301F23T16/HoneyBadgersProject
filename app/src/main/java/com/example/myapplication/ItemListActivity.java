@@ -115,6 +115,9 @@ public class ItemListActivity extends AppCompatActivity
 
     }
 
+    /**
+     * This method creates and displays a confirmation dialog for deleting items. It asks the user to confirm/cancel the deletion action before proceeding further.
+     */
     public void deleteConfirmDialog(){
 
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -128,6 +131,7 @@ public class ItemListActivity extends AppCompatActivity
                 .setNegativeButton("Cancel", null)
                 .create();
 
+        //Set a listener that unselects all checkboxes when the dialog is dismissed
         dialog.setOnDismissListener(dialogInterface -> {
             itemListAdapter.unSelectCheckBox();
         });
@@ -135,6 +139,9 @@ public class ItemListActivity extends AppCompatActivity
         dialog.show();
     }
 
+    /**
+     * This method iterates through a list of items and deletes the ones that are selected
+     */
 
     private void deleteSelectedItems(){
         try{
@@ -142,6 +149,7 @@ public class ItemListActivity extends AppCompatActivity
             for (int i = itemList.size() - 1; i>=0 ; i--){
                 Item item = itemList.get(i);
                 if (item.isSelected()){
+                    //If the item is selected, delete it from the database using its name.
                     db.deleteSelectedItem(item.getName(),this);
                 }
 

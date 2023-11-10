@@ -190,13 +190,13 @@ public class Item implements Serializable {
     }
 
 
-    public Item(String id, String name){
-        this.name = name;
-        this.id = id;
-    }
+    /**
+     * This constructor is used when item(s) has to be deleted
+     * @param name This is the name of item
+     */
+    public Item(String name){
 
-    public Item(String id){
-        this.id = id;
+        this.name = name;
         this.isSelected = isSelected();
     }
 
