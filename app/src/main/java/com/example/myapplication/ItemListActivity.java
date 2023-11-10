@@ -163,6 +163,12 @@ public class ItemListActivity extends AppCompatActivity
         Log.d("filter-option", String.format("%s",filter_option));
     }
 
+    /**
+     * Sorts the visible item list using sort options received from the SortFilterFragment
+     * @param sort_option whether to sort by date, value, description or name
+     * @param ascending Whether to sort in ascending or descending order
+     * @param filter_option not implemented yet
+     */
     @Override
     public void SortFilterFragmentOKPressed(int sort_option, boolean ascending, int filter_option) {
         // SAVE THE MOST RECENT SORT/FILTER OPTIONS

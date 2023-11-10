@@ -26,6 +26,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
+/**
+ * Class encapsulates business logic for the AddItemFragment
+ */
 public class EditItemFragment extends DialogFragment {
     private EditText itemName;
     private TextView purchaseDate;
@@ -39,6 +42,11 @@ public class EditItemFragment extends DialogFragment {
 
     private DatePickerDialog datePickerDialog;
     private EditItemInteractionInterface listener;
+
+    /**
+     * This method is attaches the Activity to an attribute of the fragment
+     * @param context this is the context of the activity that the fragment will be attached to
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -50,9 +58,20 @@ public class EditItemFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Interface used to attach an activity to this Fragment
+     * Enables methods defined in activity to be used in the fragment
+     */
     public interface EditItemInteractionInterface {
         void EditFragmentOKPressed(Item item);
     }
+
+    /**
+     * Method creates and launches an EditItemFragment
+     *      Also saves an Item object in the Fragment's bundle
+     * @param item Object to be saved in the Fragment's bundle
+     * @return EditItemFragment i.e., the fragment that will pop up
+     */
 
     public static EditItemFragment newInstance(Item item){
         Bundle args = new Bundle();
@@ -63,6 +82,14 @@ public class EditItemFragment extends DialogFragment {
 
         return fragment;
     }
+
+    /**
+     * Function encapsulates the logic behind all components in the EditItemFragment that will show up
+     *      as a dialogue. It is executed when the Fragment pops up
+     * @param savedInstanceState If the fragment is being re-initialized after
+     *      previously being shut down then this Bundle contains the data it most
+     *      recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
