@@ -122,6 +122,8 @@ public class ItemListActivity extends AppCompatActivity
             totalPrice += i.getPrice();
         }
         return totalPrice;
+
+
     }
 
     /**
@@ -172,7 +174,9 @@ public class ItemListActivity extends AppCompatActivity
         // ADD AND EDIT FEATURE CAN USE THIS
         this.sort_option = sort_option;
         this.ascending = ascending;
-        this.filter_option = 0;
+        this.filter_option = filter_option;
+        this.date_from = date_from;
+        this.date_to =date_to;
 
         // THIS WILL ALSO APPLY THE MOST RECENT SORTING/FILTERING OPTIONS TO VISIBLE LIST
         onItemListUpdate();
