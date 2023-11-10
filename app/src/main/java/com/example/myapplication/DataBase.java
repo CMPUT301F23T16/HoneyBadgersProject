@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.time.format.DateTimeFormatter;
 
 
 /**This class represents the cloud database the app is connecting to.
@@ -51,7 +52,6 @@ public class DataBase {
         itemsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
 
             @RequiresApi(api = Build.VERSION_CODES.O)
-
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshots,
                                 @Nullable FirebaseFirestoreException error) {
@@ -63,7 +63,6 @@ public class DataBase {
                     itemList.clear();
                     //For each item in the cloud db, add it to the list
                     for (QueryDocumentSnapshot doc: querySnapshots) {
-
                         String name = doc.getId();
                         Date date;
                         try {
@@ -115,9 +114,21 @@ public class DataBase {
         return itemList;
     }
 
+
+    /**
+     * Function adds the input item to the database
+     * @param item Item to be added to the user's item collection in the database
+     */
     public void addItem(Item item){
-//        itemList.add(item);
         itemsRef.document(item.getName()).set(item);
+    }
+
+    /**
+     * Function deletes the input item to the database
+     * @param item Item to be deleted from the user's item collection in the database
+     */
+    public void deleteItem(Item item){
+        itemsRef.document(item.getName()).delete();
     }
 
     /**

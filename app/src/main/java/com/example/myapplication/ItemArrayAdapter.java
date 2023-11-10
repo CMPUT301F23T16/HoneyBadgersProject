@@ -17,8 +17,18 @@ import java.util.ArrayList;
  * Adapter for items array list. Maps each item's attributes to the screen.
  */
 public class ItemArrayAdapter extends RecyclerView.Adapter {
+
+    /*
+        See:
+        https://stackoverflow.com/questions/49969278/recyclerview-item-click-listener-the-right-way
+        - Easiest way to make onClick listener functionality for recycler view
+     */
+    public interface OnItemClickListener {
+        void onItemClick(Item item, int position);
+    }
     private ArrayList<Item> items;
     private Context context;
+    private final OnItemClickListener listener;
 
 
     /**
@@ -26,9 +36,10 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
      * @param context parent object
      * @param items list of items
      */
-    public ItemArrayAdapter(Context context, ArrayList<Item> items) {
+    public ItemArrayAdapter(Context context, ArrayList<Item> items, OnItemClickListener listener) {
         this.items = items;
         this.context = context;
+        this.listener = listener;
     }
 
     public void unSelectCheckBox(){
@@ -62,27 +73,18 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Item item = items.get(position);
-
         ItemContentViewHolder itemContent = (ItemContentViewHolder) holder;
-
+        
         //Set the TextView text for the item
         itemContent.itemName.setText(item.getName());
         itemContent.itemDateAdded.setText(item.getDateAdded().toString());
-        itemContent.itemPrice.setText(item.getPrice().toString());
+        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
         itemContent.itemSelected.setChecked(item.isSelected());
 
     }
-
-    /**
-     *
-=======
-        itemContent.itemDateAdded.setText(item.getDateAdded());
-        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
-    }
-
+   
     /**
      * Counts the number of items in items list
->>>>>>> US-01.01.01
      * @return number of items in items list
      */
     @Override
@@ -93,7 +95,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     /**
      * This class maps each text view (item attribute) in item_content to its attributes
      */
-    public class ItemContentViewHolder extends RecyclerView.ViewHolder {
+    public class ItemContentViewHolder extends RecyclerView.ViewHolder{
         TextView itemName;
         TextView itemDateAdded;
         TextView itemPrice;
@@ -119,6 +121,27 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
                 }
             });
         }
+
+        /**
+         * Populates all fields in the item's content layout with proper values
+         * @param item Item object that will be used to populate text views for the current item
+         * @param position Index of the item Object in the datalist/ArrayAdapter
+         * @param listener listener object that will provide onClick functionality to each
+         *                 item in recyler view
+         */
+        public void bind(final Item item, final int position, final OnItemClickListener listener) {
+            //Set the TextView text for the item
+            itemName.setText(item.getName());
+
+            itemDateAdded.setText(item.getDateAdded());
+
+            itemPrice.setText(String.format("$%.2f", item.getPrice()));
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    listener.onItemClick(item, position);
+                }
+            });
+        }
     }
 }
-

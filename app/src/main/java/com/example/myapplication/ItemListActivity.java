@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +26,23 @@ import java.util.List;
 
 public class ItemListActivity extends AppCompatActivity
         implements DataBase.ItemListUpdateListener,
-        AddItemFragment.AddItemInteractionInterface {
+        AddItemFragment.AddItemInteractionInterface,
+        EditItemFragment.EditItemInteractionInterface,
+        SortFilterFragment.SortFilterInteractionInterface{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
     private DataBase db; //Source of item list
     private Button addItemButton;
     private Button deleteItemButton;
+    private Button sortFilterButton;
+    private int clickedItemIndex; // Index of item that is recently clicked on
+    private ArrayList<Item> visibleItems;
+
+    // MOST RECENT SORT OPTIONS
+    int sort_option = R.id.value_sort_button;
+    boolean ascending = false;
+    int filter_option = 0;
 
 
     /**
@@ -55,16 +66,25 @@ public class ItemListActivity extends AppCompatActivity
         deleteItemButton.setOnClickListener(view ->{
             deleteConfirmDialog();
         });
+        sortFilterButton = findViewById(R.id.sort_filter_button);
+        visibleItems = db.getItemList();
 
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
         itemListView.setLayoutManager(new LinearLayoutManager(this));
-        itemListAdapter = new ItemArrayAdapter(this, db.getItemList());
+        itemListAdapter = new ItemArrayAdapter(this, visibleItems, new ItemArrayAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Item item, int position) {
+                clickedItemIndex = position;
+                EditItemFragment.newInstance(item).show(getSupportFragmentManager(), "Edit Item");
+            }
+        });
+
+
         itemListView.setAdapter(itemListAdapter);
 
-
         //Set the total value
-        Double total = calculateTotal(db.getItemList());
+        Double total = calculateTotal(visibleItems);
         updateTotalBox(total);
 
         addItemButton.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +93,12 @@ public class ItemListActivity extends AppCompatActivity
                 new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
             }
         });
-
+        sortFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new SortFilterFragment().show(getSupportFragmentManager(), "Sort_Filter");
+            }
+        });
     }
 
     public void deleteConfirmDialog(){
@@ -117,12 +142,16 @@ public class ItemListActivity extends AppCompatActivity
      * This can happen due to factors internal or external to this application.
      */
     public void onItemListUpdate(){
+        Log.d("INMAIN", ""+sort_option+" "+ascending);
+
+        // KEEP VISIBLE ITEMS SORTED WITH MOST RECENT SORTING CHOICES
+        visibleItems = SorterFilterer.sort_and_filter(db.getItemList(),sort_option,ascending,filter_option);
 
         //Update the items shown on the screen
         itemListAdapter.notifyDataSetChanged();
 
         //Update the total value
-        Double total = calculateTotal(db.getItemList());
+        Double total = calculateTotal(visibleItems);
         updateTotalBox(total);
     }
 
@@ -149,9 +178,49 @@ public class ItemListActivity extends AppCompatActivity
         totalBox.setText(String.format("$%.2f", total));
     }
 
+    /**
+     * Adds the item received from the AddItemFragment to the user's item collection in DB
+     * @param item item to be added to users item collection in DB
+     */
     @Override
     public void AddFragmentOKPressed(Item item) {
         db.addItem(item);
+
+        Log.d("xxx sort-option", String.format("%s",sort_option));
+        Log.d("xxx ascending", String.format("%s",ascending));
+        Log.d("filter-option", String.format("%s",filter_option));
+    }
+
+    /**
+     * Updates an item in the user's item collection (in DB)
+     *      using updated item received from EditItemFragment
+     * @param item item to be replaced in the user's item collection in DB
+     */
+    @Override
+    public void EditFragmentOKPressed(Item item) {
+        // Remove the existing outdated item from DB
+        db.deleteItem(visibleItems.get(clickedItemIndex));
+        Log.d("xxx sort-option", String.format("%s",sort_option));
+        Log.d("xxx ascending", String.format("%s",ascending));
+        Log.d("filter-option", String.format("%s",filter_option));
+
+        // Add the updated item to DB
+        db.addItem(item);
+        Log.d("xxx sort-option", String.format("%s",sort_option));
+        Log.d("xxx ascending", String.format("%s",ascending));
+        Log.d("filter-option", String.format("%s",filter_option));
+    }
+
+    @Override
+    public void SortFilterFragmentOKPressed(int sort_option, boolean ascending, int filter_option) {
+        // SAVE THE MOST RECENT SORT/FILTER OPTIONS
+        // ADD AND EDIT FEATURE CAN USE THIS
+        this.sort_option = sort_option;
+        this.ascending = ascending;
+        this.filter_option = 0;
+
+        // THIS WILL ALSO APPLY THE MOST RECENT SORTING/FILTERING OPTIONS TO VISIBLE LIST
+        onItemListUpdate();
     }
 }
 

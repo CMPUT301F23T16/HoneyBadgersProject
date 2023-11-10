@@ -99,7 +99,6 @@ public class Item implements Serializable {
      * @param price This is the price of the item
      * @param dateAdded This is the date the item was added to the database
      */
-
     public Item(String name, double price, Date dateAdded) {
         this.name = name;
         this.price = price;
@@ -116,7 +115,6 @@ public class Item implements Serializable {
      * @param price This is the price of the item
      */
     public Item(String name, double price) {
-
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
         String strDate = dateFormat.format(new Date());
 
@@ -157,9 +155,7 @@ public class Item implements Serializable {
      * getter for date added
      * @return The addition date of the item
      */
-
     public String getDateAdded() {
-
         return this.dateAdded;
     }
 
