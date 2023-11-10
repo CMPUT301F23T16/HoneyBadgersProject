@@ -100,7 +100,6 @@ public class Item implements Serializable {
      * @param price This is the price of the item
      * @param dateAdded This is the date the item was added to the database
      */
-
     public Item(String name, double price, Date dateAdded) {
         this.name = name;
         this.price = price;

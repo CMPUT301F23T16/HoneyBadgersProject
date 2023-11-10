@@ -24,7 +24,6 @@ import java.util.List;
 import java.time.format.DateTimeFormatter;
 
 
-
 /**This class represents the cloud database the app is connecting to.
  * All communications with the database are handled here.
  */
@@ -65,7 +64,8 @@ public class DataBase {
                 if (querySnapshots != null) {
                     itemList.clear();
                     //For each item in the cloud db, add it to the list
-                    for (QueryDocumentSnapshot doc : querySnapshots) {
+
+                    for (QueryDocumentSnapshot doc: querySnapshots) {
 
                         String name = doc.getId();
                         Date date;
@@ -103,7 +103,7 @@ public class DataBase {
         itemsRef.document(itemId).delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
-                    context.onItemDelete(itemId);
+
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(context, "Failed to Delete item(s)", Toast.LENGTH_SHORT).show();
@@ -126,7 +126,9 @@ public class DataBase {
      *
      * @param item Item to be added to the user's item collection in the database
      */
-    public void addItem(Item item) {
+
+    public void addItem(Item item){
+
         itemsRef.document(item.getName()).set(item);
     }
 
@@ -149,4 +151,3 @@ public class DataBase {
         public void onItemListUpdate();
     }
 }
-
