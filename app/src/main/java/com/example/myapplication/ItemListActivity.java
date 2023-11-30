@@ -73,7 +73,7 @@ public class ItemListActivity extends AppCompatActivity
         setContentView(R.layout.item_list_activity);
 
         //Data base instance with userName
-        String userName = "Adi";
+        String userName = FirebaseAuth.getInstance().getCurrentUser().getUid();
         db = new DataBase (userName, this);
 
         addItemButton = findViewById(R.id.add_item_button);
