@@ -38,7 +38,7 @@ public class EditItemFragment extends DialogFragment {
     private EditText itemSerial;
     private EditText itemPrice;
     private EditText itemComment;
-    private EditText itemTag;
+    private TextView itemTag;
 
     private DatePickerDialog datePickerDialog;
     private EditItemInteractionInterface listener;
@@ -104,7 +104,7 @@ public class EditItemFragment extends DialogFragment {
         itemSerial = view.findViewById(R.id.add_item_serial_number);
         itemPrice = view.findViewById(R.id.add_item_price);
         itemComment = view.findViewById(R.id.add_item_comment);
-        itemTag = view.findViewById(R.id.add_item_tag_spinner);
+        itemTag = view.findViewById(R.id.add_item_tag);
 
         // Get clicked on item from bundle and set view values
         Item clickedItem = (Item) getArguments().getSerializable("item");

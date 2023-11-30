@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,22 +8,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +81,10 @@ public class ItemListActivity extends AppCompatActivity
         sortFilterButton = findViewById(R.id.sort_filter_button);
         visibleItems = db.getItemList();
 
+        //initialize the list of tags
+        List<String> tags = new ArrayList<>();
+        tags.add("Bedroom");
+        tags.add("Kitchen");
 
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
@@ -125,6 +125,7 @@ public class ItemListActivity extends AppCompatActivity
             }
         });
     }
+
 
     /**
      * This method creates and displays a confirmation dialog for deleting items. It asks the user to confirm/cancel the deletion action before proceeding further.

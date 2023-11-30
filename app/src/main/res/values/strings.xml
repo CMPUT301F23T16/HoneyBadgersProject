@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="my_items_title">My Items</string>
+    <string-array name="tags">
+        <item>Bedroom</item>
+        <item>Kitchen</item>
+        <item>Bathroom</item>
+        <item>Entertainment</item>
+        <item>Personal</item>
+    </string-array>
 </resources>

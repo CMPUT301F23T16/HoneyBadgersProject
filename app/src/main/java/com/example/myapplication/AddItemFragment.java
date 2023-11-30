@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +31,7 @@ import java.util.Calendar;
 /**
  * Class encapsulates business logic for the AddItemFragment
  */
-public class AddItemFragment extends DialogFragment {
+public class AddItemFragment extends DialogFragment implements TagSelectionListener{
     private EditText itemName;
     private TextView purchaseDate;
     private EditText itemDescription;
@@ -38,7 +40,7 @@ public class AddItemFragment extends DialogFragment {
     private EditText itemSerial;
     private EditText itemPrice;
     private EditText itemComment;
-    private EditText itemTag;
+    private TextView itemTag;
 
     private DatePickerDialog datePickerDialog;
     private AddItemInteractionInterface listener;
@@ -73,6 +75,7 @@ public class AddItemFragment extends DialogFragment {
      *      previously being shut down then this Bundle contains the data it most
      *      recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
      */
+    @SuppressLint("MissingInflatedId")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -87,7 +90,14 @@ public class AddItemFragment extends DialogFragment {
         itemSerial = view.findViewById(R.id.add_item_serial_number);
         itemPrice = view.findViewById(R.id.add_item_price);
         itemComment = view.findViewById(R.id.add_item_comment);
-        itemTag = view.findViewById(R.id.add_item_tag_spinner);
+        itemTag = view.findViewById(R.id.add_item_tag);
+
+        itemTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTagFragment();
+            }
+        });
 
         purchaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,5 +181,23 @@ public class AddItemFragment extends DialogFragment {
         });
 
         return dialogue;
+    }
+
+    private void openTagFragment(){
+        //create an instance of tag fragment
+        TagFragment tagFragment = new TagFragment();
+        tagFragment.setTagSelectionListener(this);
+
+        //Begin a fragment transaction
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        //Replace the container with new fragment
+        transaction.replace(R.id.add_edit_container,tagFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void onTagSelected(String tag){
+        itemTag.setText(tag);
     }
 }
