@@ -47,11 +47,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("com.google.android.material:material:<latest_version>")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:<latest_version>")
-
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
-    implementation("com.google.firebase:firebase-firestore")
+    androidTestImplementation("com.google.android.material:material:1.10.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
-
 }
