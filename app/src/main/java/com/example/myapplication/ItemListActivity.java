@@ -10,14 +10,17 @@ import android.content.Intent;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.util.Log;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +42,8 @@ public class ItemListActivity extends AppCompatActivity
         implements DataBase.ItemListUpdateListener,
         AddItemFragment.AddItemInteractionInterface,
         EditItemFragment.EditItemInteractionInterface,
-        SortFilterFragment.SortFilterInteractionInterface{
+        SortFilterFragment.SortFilterInteractionInterface,
+PhotosFragment.PhotosInteractionInterface{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
@@ -57,6 +62,9 @@ public class ItemListActivity extends AppCompatActivity
 
     private String date_from;
     private String date_to;
+    private File directory;
+    private ArrayList<ImageView> photos;
+    private boolean editing_item = false;
 
 
     /**
@@ -81,6 +89,10 @@ public class ItemListActivity extends AppCompatActivity
         deleteItemButton.setOnClickListener(view ->{
             deleteConfirmDialog();
         });
+        directory = new File(getFilesDir(), "item_images");
+        if(!directory.exists()){
+            directory.mkdir();
+        }
 
         sortFilterButton = findViewById(R.id.sort_filter_button);
         visibleItems = db.getItemList();
@@ -93,6 +105,7 @@ public class ItemListActivity extends AppCompatActivity
             @Override
             public void onItemClick(Item item, int position) {
                 clickedItemIndex = position;
+                editing_item = true;
                 EditItemFragment.newInstance(item).show(getSupportFragmentManager(), "Edit Item");
             }
         });
@@ -229,6 +242,16 @@ public class ItemListActivity extends AppCompatActivity
         Log.d("filter-option", String.format("%s",filter_option));
     }
 
+    @Override
+    public String[] getPhotoReferences(String item_name) {
+        ArrayList<String> references = new ArrayList<>();
+        for(ImageView i:photos)
+        {
+            references.add("images/"+item_name+"/"+(String) i.getTag());
+        }
+        return (String[]) references.toArray();
+    }
+
     /**
      * Updates an item in the user's item collection (in DB)
      *      using updated item received from EditItemFragment
@@ -244,6 +267,7 @@ public class ItemListActivity extends AppCompatActivity
 
         // Add the updated item to DB
         db.addItem(item);
+        editing_item = false;
         Log.d("xxx sort-option", String.format("%s",sort_option));
         Log.d("xxx ascending", String.format("%s",ascending));
         Log.d("filter-option", String.format("%s",filter_option));
@@ -277,6 +301,31 @@ public class ItemListActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish(); // Call this when your activity is done and should be closed.
+    }
+
+    @Override
+    public File getDirectory() {
+        return directory;
+    }
+
+    @Override
+    public void addPhoto(Uri uri) {
+        ImageView photo = (ImageView) LayoutInflater.from(this).inflate(R.layout.item_image,null,false);
+        photo.setImageURI(uri);
+        photo.setTag(uri.getLastPathSegment().toString());
+        Log.d(uri.getLastPathSegment().toString(), "addPhoto: ");
+        photos.add(photo);
+    }
+
+    @Override
+    public PhotoArrayAdapter getGridAdapter() {
+        photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):new ArrayList<ImageView>();
+        return new PhotoArrayAdapter(this,photos);
+    }
+
+    @Override
+    public void resetPhotos() {
+        photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):null;
     }
 }
 

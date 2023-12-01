@@ -64,6 +64,7 @@ public class AddItemFragment extends DialogFragment {
      */
     public interface AddItemInteractionInterface {
         void AddFragmentOKPressed(Item item);
+        String[] getPhotoReferences(String item_name);
     }
 
     /**
@@ -127,6 +128,12 @@ public class AddItemFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
+                })
+                .setNeutralButton("Photos", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new PhotosFragment().show(getActivity().getSupportFragmentManager(), "Photos");
+                    }
                 });
         AlertDialog dialogue = builder.create();
         dialogue.show();
@@ -160,7 +167,7 @@ public class AddItemFragment extends DialogFragment {
                 else {
                     try {
                         Item temp = new Item(name, Double.parseDouble(price), new SimpleDateFormat("yyyy-MM-dd").parse(dateAdded),
-                                description, make, model, serial, comment, tag);
+                                description, make, model, serial, comment, tag, listener.getPhotoReferences(name));
                         listener.AddFragmentOKPressed(temp);
                         dialogue.dismiss();
                     } catch (ParseException e) {

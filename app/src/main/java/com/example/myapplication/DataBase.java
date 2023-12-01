@@ -1,18 +1,24 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.os.Build;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,9 +37,11 @@ public class DataBase {
     private FirebaseFirestore db;
     private ArrayList<Item> itemList;
     private CollectionReference itemsRef;
+    private FirebaseStorage storage;
 
     public DataBase(String userName) {
         this.db = FirebaseFirestore.getInstance();
+        this.storage = FirebaseStorage.getInstance();
         this.itemsRef = db.collection(userName);
     }
 
@@ -82,9 +90,10 @@ public class DataBase {
                         String serial = doc.getString("serial");
                         String comment = doc.getString("comment");
                         String tag = doc.getString("tag");
+                        String[] image_refs = (String[])doc.get("imageRefs");
 
                         Item temp = new Item(name, price, date, description, make,
-                                model, serial, comment, tag);
+                                model, serial, comment, tag,image_refs);
 
                         Log.d("Firestore", String.format("Item(%s, %s, %s) fetched",
                                 name, doc.getString("dateAdded"), price));
@@ -105,7 +114,7 @@ public class DataBase {
      * @param context The context from which this method is called, typically the current Activity.
      */
     public void deleteSelectedItem(String itemName, ItemListActivity context){
-        itemsRef.document(itemName).delete()
+        itemsRef.document(itemName).delete() //also delete their images
                 //This will be executed if the document deletion is successful.
 
                 .addOnSuccessListener(aVoid -> {
@@ -147,6 +156,7 @@ public class DataBase {
      * @param item Item to be deleted from the user's item collection in the database
      */
     public void deleteItem(Item item) {
+        //also delete their images
         itemsRef.document(item.getName()).delete();
     }
 
@@ -158,5 +168,23 @@ public class DataBase {
          * This method is called whenever an update to itemList happens
          */
         public void onItemListUpdate();
+    }
+    public ArrayList<ImageView> getItemImages(Context context, Item item)
+    {
+        ArrayList<ImageView> image_views = new ArrayList<>();
+        for(String s: item.getImageRefs()) {
+            StorageReference storageReference = storage.getReference().child(s);
+
+            ImageView imageView = (ImageView) LayoutInflater.from(context).inflate(R.layout.item_image, null, false);
+
+
+            Glide.with(context)
+                    .load(storageReference)
+                    .into(imageView);
+            image_views.add(imageView);
+        }
+        return image_views;
+
+
     }
 }

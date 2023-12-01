@@ -16,7 +16,7 @@ import java.util.Date;
  * This class represents an item.
  */
 
-public class Item implements Serializable {
+public class  Item implements Serializable {
     private String name;
     private double price;
     private String dateAdded;
@@ -28,6 +28,7 @@ public class Item implements Serializable {
     private String tag;
     private String id;
     private boolean isSelected = false;
+    private String[] image_refs;
 
     public void setName(String name) {
         this.name = name;
@@ -129,7 +130,7 @@ public class Item implements Serializable {
      * This constructor creates a new Item using all fields in Add Item Fragment
      */
     public Item(String name, double price, Date dateAdded, String description, String make,
-                String model, String serial, String comment, String tag) {
+                String model, String serial, String comment, String tag,String[] image_refernces) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(dateAdded);
@@ -143,6 +144,7 @@ public class Item implements Serializable {
         this.serial = serial;
         this.comment = comment;
         this.tag = tag;
+        this.image_refs = image_refernces;
     }
 
     /**
@@ -206,5 +208,13 @@ public class Item implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String[] getImageRefs() {
+        return image_refs;
+    }
+
+    public void setImageRefs(String[] imageRefs) {
+        this.image_refs = imageRefs;
     }
 }
