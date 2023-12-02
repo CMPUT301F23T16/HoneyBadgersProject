@@ -39,16 +39,16 @@
 
     <EditText
         android:id="@+id/add_item_description"
-        android:layout_width="181dp"
-        android:layout_height="51dp"
+        android:layout_width="251dp"
+        android:layout_height="50dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="25dp"
+        android:layout_marginEnd="80dp"
         android:layout_marginBottom="2dp"
         android:hint="brief description"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/add_item_make"
-        app:layout_constraintEnd_toStartOf="@+id/gallery"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_item_date" />
 
@@ -159,23 +159,5 @@
         app:layout_constraintStart_toEndOf="@+id/add_item_serial_number"
         app:layout_constraintTop_toBottomOf="@+id/add_item_model"
         app:layout_constraintVertical_bias="0.0" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/gallery"
-        android:layout_width="40sp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="80dp"
-        android:layout_marginBottom="15dp"
-        android:height="40sp"
-        android:drawableTop="@drawable/baseline_collections_24"
-        app:layout_constraintBottom_toTopOf="@+id/add_item_make"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.098"
-        app:layout_constraintStart_toEndOf="@+id/add_item_description"
-        app:layout_constraintTop_toBottomOf="@+id/add_item_date"
-        app:layout_constraintVertical_bias="1.0" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

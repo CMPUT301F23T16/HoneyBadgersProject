@@ -36,6 +36,12 @@
             android:exported="true" />
 
         <!-- Add other activities here -->
+        <!-- Add other activities here -->
+<!--        <activity-->
+<!--            android:name="com.journeyapps.barcodescanner.CaptureActivity"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            tools:replace="android:screenOrientation"-->
+<!--            android:stateNotNeeded="true"/>-->
 
     </application>
 
