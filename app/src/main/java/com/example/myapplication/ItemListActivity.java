@@ -197,7 +197,7 @@ public class ItemListActivity extends AppCompatActivity
      * @param itemList List of items to calculate total of
      * @return The total price
      */
-    private Double calculateTotal(ArrayList<Item> itemList) {
+    static Double calculateTotal(ArrayList<Item> itemList) {
         Double totalPrice = 0.0;
         for(Item i : itemList){
             totalPrice += i.getPrice();
