@@ -1,5 +1,5 @@
 package com.example.myapplication;
 
 public interface TagSelectionListener {
-    void onTagSelected(String Tag);
+    void onTagSelected(String tag);
 }

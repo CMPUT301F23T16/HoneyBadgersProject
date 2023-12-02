@@ -34,7 +34,9 @@ public class ItemListActivity extends AppCompatActivity
         implements DataBase.ItemListUpdateListener,
         AddItemFragment.AddItemInteractionInterface,
         EditItemFragment.EditItemInteractionInterface,
-        SortFilterFragment.SortFilterInteractionInterface{
+        SortFilterFragment.SortFilterInteractionInterface,
+        AddItemFragment.TagFragmentListener,
+        TagSelectionListener{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
@@ -278,6 +280,18 @@ public class ItemListActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish(); // Call this when your activity is done and should be closed.
+    }
+
+    @Override
+    public void onOpenTagFragment() {
+        // Create an instance of TagFragment
+        TagFragment tagFragment = new TagFragment();
+        tagFragment.show(getSupportFragmentManager(), "Add Tag(s)");
+    }
+
+    @Override
+    public void onTagSelected(String tag) {
+        System.out.println(tag);
     }
 }
 

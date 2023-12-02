@@ -31,7 +31,7 @@ import java.util.Calendar;
 /**
  * Class encapsulates business logic for the AddItemFragment
  */
-public class AddItemFragment extends DialogFragment implements TagSelectionListener{
+public class AddItemFragment extends DialogFragment{
     private EditText itemName;
     private TextView purchaseDate;
     private EditText itemDescription;
@@ -44,6 +44,8 @@ public class AddItemFragment extends DialogFragment implements TagSelectionListe
 
     private DatePickerDialog datePickerDialog;
     private AddItemInteractionInterface listener;
+
+    private TagFragmentListener tagFragmentListener;
 
     /**
      * This method is attaches the Activity to an attribute of the fragment
@@ -58,6 +60,13 @@ public class AddItemFragment extends DialogFragment implements TagSelectionListe
         else {
             throw new RuntimeException(context.toString() + "OnFragmentInteractionListener is not implemented");
         }
+        if (context instanceof TagFragmentListener) {
+            tagFragmentListener = (TagFragmentListener) context;
+        }
+        else {
+            throw new RuntimeException(context.toString() + "TagFragmentListener is not implemented");
+        }
+
     }
 
     /**
@@ -66,6 +75,10 @@ public class AddItemFragment extends DialogFragment implements TagSelectionListe
      */
     public interface AddItemInteractionInterface {
         void AddFragmentOKPressed(Item item);
+    }
+
+    public interface TagFragmentListener {
+        void onOpenTagFragment();
     }
 
     /**
@@ -184,20 +197,7 @@ public class AddItemFragment extends DialogFragment implements TagSelectionListe
     }
 
     private void openTagFragment(){
-        //create an instance of tag fragment
-        TagFragment tagFragment = new TagFragment();
-        tagFragment.setTagSelectionListener(this);
-
-        //Begin a fragment transaction
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        //Replace the container with new fragment
-        transaction.replace(R.id.add_edit_container,tagFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        tagFragmentListener.onOpenTagFragment();
     }
 
-    @Override
-    public void onTagSelected(String tag){
-        itemTag.setText(tag);
-    }
 }
