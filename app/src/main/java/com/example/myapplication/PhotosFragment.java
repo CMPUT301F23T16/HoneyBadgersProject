@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -98,6 +99,15 @@ public class PhotosFragment extends DialogFragment {
 
             }
         });
+        photo_gallery_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickMultipleMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+
+            }
+        });
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
                 .setTitle("Photos")
@@ -157,7 +167,23 @@ public class PhotosFragment extends DialogFragment {
                     // do what you need with the uri here ...
                     listener.addPhoto(current_uri);
                     photo_adapter.notifyDataSetChanged();
+                    current_uri = null;
 
+                }
+            });
+    ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia =
+            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
+                // Callback is invoked after the user selects media items or closes the
+                // photo picker.
+                if (!uris.isEmpty()) {
+                    Log.d("PhotoPicker", "Number of items selected: " + uris.size());
+                    for(Uri uri:uris)
+                    {
+                        listener.addPhoto(uri);
+                    }
+                    photo_adapter.notifyDataSetChanged();
+                } else {
+                    Log.d("PhotoPicker", "No media selected");
                 }
             });
 
