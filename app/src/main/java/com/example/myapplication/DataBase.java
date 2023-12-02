@@ -173,15 +173,16 @@ public class DataBase {
     {
         ArrayList<ImageView> image_views = new ArrayList<>();
         for(String s: item.getImageRefs()) {
-            StorageReference storageReference = storage.getReference().child(s);
+            StorageReference storageReference = storage.getReference().child("images/"+item.getName()+"/"+s);
 
-            ImageView imageView = (ImageView) LayoutInflater.from(context).inflate(R.layout.item_image, null, false);
+            ImageView image_view = (ImageView) LayoutInflater.from(context).inflate(R.layout.item_image, null, false);
 
 
             Glide.with(context)
                     .load(storageReference)
-                    .into(imageView);
-            image_views.add(imageView);
+                    .into(image_view);
+            image_view.setTag(s);
+            image_views.add(image_view);
         }
         return image_views;
 

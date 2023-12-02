@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,8 +19,13 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -41,13 +47,58 @@ import java.io.File;
 import java.util.Calendar;
 
 public class PhotosFragment extends DialogFragment {
-    private FloatingActionButton photo_delete_button;
     private FloatingActionButton photo_camera_button;
     private FloatingActionButton photo_gallery_button;
     private GridView grid_view;
     private PhotosInteractionInterface listener;
     private Uri current_uri;
     private PhotoArrayAdapter photo_adapter;
+
+    private ActivityResultLauncher<String> requestCameraPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    if (result) {
+                        openCamera();
+                    } else {
+                        Toast.makeText(requireContext(), "Camera Permission is Required to Take Photos", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+    );
+
+
+    private ActivityResultLauncher<Uri> takePicture = registerForActivityResult(
+            new ActivityResultContracts.TakePicture(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+
+                    // do what you need with the uri here ...
+                    listener.addPhoto(current_uri);
+                    photo_adapter.notifyDataSetChanged();
+                    current_uri = null;
+
+                }
+            });
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia =
+            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
+                // Callback is invoked after the user selects media items or closes the
+                // photo picker.
+                if (!uris.isEmpty()) {
+                    Log.d("PhotoPicker", "Number of items selected: " + uris.size());
+                    for(Uri uri:uris)
+                    {
+                        listener.addPhoto(uri);
+                    }
+                    photo_adapter.notifyDataSetChanged();
+                } else {
+                    Log.d("PhotoPicker", "No media selected");
+                }
+            });
+
+
 
 
     public interface PhotosInteractionInterface{
@@ -56,6 +107,7 @@ public class PhotosFragment extends DialogFragment {
         public void addPhoto(Uri uri);
         public PhotoArrayAdapter getGridAdapter();
         public void resetPhotos();
+        public void removePhoto(int pos);
 
     }
 
@@ -75,7 +127,6 @@ public class PhotosFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.photos_fragment, null);
-        photo_delete_button = view.findViewById(R.id.photoDeleteButton);
         photo_camera_button = view.findViewById(R.id.photoCameraButton);
         photo_gallery_button = view.findViewById(R.id.photoGalleryButton);
         grid_view = view.findViewById(R.id.photo_grid);
@@ -108,13 +159,58 @@ public class PhotosFragment extends DialogFragment {
 
             }
         });
+
+        /**  To enlarge image has bugs
+        grid_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Dialog builder =  new Dialog(requireContext(), android.R.style.Theme_Light);
+                builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                builder.getWindow().setBackgroundDrawable(
+                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        //nothing;
+                        view.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, 1000));
+                    }
+                });
+
+
+                builder.addContentView(view, new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+                builder.show();
+            }
+        });
+         */
+        grid_view.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                        .setTitle("Confirm Delete")
+                        .setMessage("Are you sure you want to delete the selected image?")
+                        .setPositiveButton("Delete", (dialogInterface, which) -> {
+
+                            listener.removePhoto(position);
+                            photo_adapter.notifyDataSetChanged();
+
+
+
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
+                return true;
+            }
+        });
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
                 .setTitle("Photos")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getActivity().onBackPressed(); //to be changed
+                        getActivity().onBackPressed(); //to be changed has bugs
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -141,51 +237,6 @@ public class PhotosFragment extends DialogFragment {
         takePicture.launch(current_uri);
 
     }
-
-
-    private ActivityResultLauncher<String> requestCameraPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean result) {
-                    if (result) {
-                        openCamera();
-                    } else {
-                        Toast.makeText(requireContext(), "Camera Permission is Required to Take Photos", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-    );
-
-
-    ActivityResultLauncher<Uri> takePicture = registerForActivityResult(
-            new ActivityResultContracts.TakePicture(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean result) {
-
-                    // do what you need with the uri here ...
-                    listener.addPhoto(current_uri);
-                    photo_adapter.notifyDataSetChanged();
-                    current_uri = null;
-
-                }
-            });
-    ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia =
-            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
-                // Callback is invoked after the user selects media items or closes the
-                // photo picker.
-                if (!uris.isEmpty()) {
-                    Log.d("PhotoPicker", "Number of items selected: " + uris.size());
-                    for(Uri uri:uris)
-                    {
-                        listener.addPhoto(uri);
-                    }
-                    photo_adapter.notifyDataSetChanged();
-                } else {
-                    Log.d("PhotoPicker", "No media selected");
-                }
-            });
 
 
 

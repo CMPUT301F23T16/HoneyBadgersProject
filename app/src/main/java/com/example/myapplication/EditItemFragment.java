@@ -64,7 +64,7 @@ public class EditItemFragment extends DialogFragment {
      */
     public interface EditItemInteractionInterface {
         void EditFragmentOKPressed(Item item);
-        String[] getPhotoReferences(String item_name);
+        String[] getPhotoReferences();
     }
 
     /**
@@ -202,7 +202,7 @@ public class EditItemFragment extends DialogFragment {
                 else {
                     try {
                         Item temp = new Item(name, Double.parseDouble(price), new SimpleDateFormat("yyyy-MM-dd").parse(dateAdded),
-                                description, make, model, serial, comment, tag, listener.getPhotoReferences(name));
+                                description, make, model, serial, comment, tag, listener.getPhotoReferences());
                         listener.EditFragmentOKPressed(temp);
                         dialogue.dismiss();
                     } catch (ParseException e) {

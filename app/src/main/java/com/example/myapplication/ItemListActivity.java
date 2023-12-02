@@ -243,11 +243,11 @@ PhotosFragment.PhotosInteractionInterface{
     }
 
     @Override
-    public String[] getPhotoReferences(String item_name) {
+    public String[] getPhotoReferences() {
         ArrayList<String> references = new ArrayList<>();
         for(ImageView i:photos)
         {
-            references.add("images/"+item_name+"/"+(String) i.getTag());
+            references.add((String) i.getTag());
         }
         return (String[]) references.toArray();
     }
@@ -326,6 +326,11 @@ PhotosFragment.PhotosInteractionInterface{
     @Override
     public void resetPhotos() {
         photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):null;
+    }
+    @Override
+    public void removePhoto(int position)
+    {
+        photos.remove(position);
     }
 }
 
