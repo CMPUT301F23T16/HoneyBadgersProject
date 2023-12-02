@@ -32,13 +32,15 @@ public class LoginSignupActivityTest {
     }
 
     @Test
-    public void testCorrectCredentialsForLogin() {
+    public void testCorrectCredentialsForLogin() throws InterruptedException {
         // Enter correct credentials
-        onView(withId(R.id.loginEmail)).perform(typeText("test@example.com"));
-        onView(withId(R.id.loginPassword)).perform(typeText("password"));
+        onView(withId(R.id.loginEmail)).perform(typeText("bushra1@ualberta.ca"));
+        onView(withId(R.id.loginPassword)).perform(typeText("Kikos100$"));
 
         // Perform a click on the login button
         onView(withId(R.id.buttonLoginSubmit)).perform(click());
+        Thread.sleep(10000);
+        onView(withId(R.id.logout_button)).check(matches(isDisplayed()));
 
         // Assuming correct credentials and successful login,
         // the ItemListActivity should be started.
