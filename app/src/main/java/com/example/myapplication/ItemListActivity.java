@@ -131,6 +131,8 @@ public class ItemListActivity extends AppCompatActivity
     }
 
 
+
+
     /**
      * This method creates and displays a confirmation dialog for deleting items. It asks the user to confirm/cancel the deletion action before proceeding further.
      */
@@ -297,6 +299,8 @@ public class ItemListActivity extends AppCompatActivity
 
         tagFragment.show(getSupportFragmentManager(), "Add Tag(s)");
     }
+
+
 
     @Override
     public void onTagSelected(String tag) {

@@ -38,6 +38,12 @@ public class TagFragment extends DialogFragment {
     }
 
 
+    public interface TagSelectionListener {
+        void onTagSelected(String tag);
+        void onTagListUpdated(List<String> updatedTagList);
+    }
+
+
     public void onAttach(@NonNull Context context) {
 
         super.onAttach(context);
@@ -89,6 +95,7 @@ public class TagFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         String selectedTag = tagSpinner.getSelectedItem().toString();
                         tagSelectionListener.onTagSelected(selectedTag);
+                        tagSelectionListener.onTagListUpdated(tagsList);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

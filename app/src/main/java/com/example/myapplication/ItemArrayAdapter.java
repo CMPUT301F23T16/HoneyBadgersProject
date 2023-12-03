@@ -31,6 +31,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     private ArrayList<Item> items;
     private Context context;
     private final OnItemClickListener listener;
+    private List<Item> filteredItems;
 
 
     /**
@@ -44,6 +45,12 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         this.context = context;
         this.listener = listener;
     }
+    // Update the filtered items and notify the adapter
+    public void updateFilteredItems(List<Item> filteredItems) {
+        this.filteredItems = filteredItems;
+        notifyDataSetChanged();
+    }
+
 
     /**
      * This will unselect the checkboxes once the delete functionality is implemented/ dialog box closes
@@ -106,8 +113,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
      */
     @Override
     public int getItemCount() {
-        return items.size();
+
+        return (filteredItems != null) ? filteredItems.size() : 0;
+        //return items.size();
     }
+
 
     /**
      * This class maps each text view (item attribute) in item_content to its attributes

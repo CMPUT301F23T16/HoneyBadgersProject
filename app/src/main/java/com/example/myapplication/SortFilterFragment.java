@@ -25,9 +25,11 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
-public class SortFilterFragment extends DialogFragment {
+public class SortFilterFragment extends DialogFragment implements TagFragment.TagSelectionListener{
     /**
      * This is an interface for communication between the fragment and its host activity.
      */
@@ -53,6 +55,9 @@ public class SortFilterFragment extends DialogFragment {
     private ToggleButton ascending;
 
     private int filtering_option;
+    private String selectedTag;
+
+    private TagFragment.TagSelectionListener tagSelectionListener;
 
     /**
      * Called when the fragment is attached to an activity.
@@ -63,11 +68,49 @@ public class SortFilterFragment extends DialogFragment {
         super.onAttach(context);
         if (context instanceof SortFilterInteractionInterface) {
             listener = (SortFilterInteractionInterface) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement SortFilterInteractionInterface");
         }
-        else {
-            throw new RuntimeException(context.toString() + "SortFilterInteractionInterface is not implemented");
+
+        if (context instanceof TagFragment.TagSelectionListener) {
+            tagSelectionListener = (TagFragment.TagSelectionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement TagSelectionListener");
         }
+
     }
+    @Override
+    public void onTagSelected(String tag) {
+        selectedTag = tag;
+    }
+
+    @Override
+    public void onTagListUpdated(List<String> updatedTagList) {
+        // Update the tag list in the search view
+        // This can be done if you have a reference to the search view's adapter
+    }
+    //////////////
+
+  //  @Override
+   // public void SortFilterFragmentOKPressed(int sort_option, boolean asc, int filter_option, String date_from, String date_to) {
+        // ...
+
+        // Handle filtering by tag if filter_option corresponds to tag filtering
+       // if (filter_option == YOUR_TAG_FILTER_OPTION_CONSTANT) {
+            // Filter the items based on the selected tag
+        //    List<Item> filteredItems = filterByTag(visibleItems, selectedTag);
+            // Further handle the filteredItems, update UI, etc.
+        //    itemListAdapter.updateFilteredItems(filteredItems);
+       // }
+   // }
+
+    // Helper method to filter items by tag
+    private List<Item> filterByTag(List<Item> itemList, String tag) {
+        return itemList.stream()
+                .filter(item -> item.getTag().equals(tag))
+                .collect(Collectors.toList());
+    }
+
     /**
      * Called to create the dialog displayed by this fragment.
      *
