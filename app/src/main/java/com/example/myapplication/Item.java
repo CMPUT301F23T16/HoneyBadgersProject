@@ -95,6 +95,7 @@ public class Item implements Serializable {
         if (this.tag == null) {
             this.tag = new ArrayList<>();
         }
+        this.tag.clear(); //each item will only have one tag
         this.tag.add(tag);
     }
 

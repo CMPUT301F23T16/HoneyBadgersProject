@@ -90,6 +90,8 @@ public class SortFilterFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
 
+
+
         builder.setView(view)
                 .setTitle("Sort/filter item")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {

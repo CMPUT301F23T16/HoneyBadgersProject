@@ -255,6 +255,7 @@ public class ItemListActivity extends AppCompatActivity
         Log.d("filter-option", String.format("%s",filter_option));
     }
 
+
     /**
      * Sorts the visible item list using sort options received from the SortFilterFragment
      * @param sort_option whether to sort by date, value, description or name
