@@ -5,10 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,6 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,6 +44,8 @@ public class EditItemFragment extends DialogFragment {
     private EditText itemPrice;
     private EditText itemComment;
     private EditText itemTag;
+    private Button scan_button;
+    private ItemInfoFetcher infoFetcher;
 
     private DatePickerDialog datePickerDialog;
     private EditItemInteractionInterface listener;
@@ -105,6 +112,7 @@ public class EditItemFragment extends DialogFragment {
         itemPrice = view.findViewById(R.id.add_item_price);
         itemComment = view.findViewById(R.id.add_item_comment);
         itemTag = view.findViewById(R.id.add_item_tag_spinner);
+        scan_button = view.findViewById(R.id.scan_button);
 
         // Get clicked on item from bundle and set view values
         Item clickedItem = (Item) getArguments().getSerializable("item");
@@ -118,6 +126,20 @@ public class EditItemFragment extends DialogFragment {
         itemComment.setText(clickedItem.getComment());
         itemTag.setText(clickedItem.getTag());
 
+
+        // BUTTON CLICK TRIGGERS ZXING BARCODE SCANNER
+        // SUCCESSFUL SCAN TRIGGERS onActivityResult
+        scan_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                IntentIntegrator integrator = IntentIntegrator.forSupportFragment(EditItemFragment.this);
+                integrator.setOrientationLocked(true);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+                integrator.setPrompt("Scan a barcode or QR code");
+                integrator.initiateScan();
+            }
+        });
 
         // Coding logic for date picker
         purchaseDate.setOnClickListener(new View.OnClickListener() {
@@ -207,4 +229,53 @@ public class EditItemFragment extends DialogFragment {
 
         return dialogue;
     }
+
+    /**
+     * Method triggered when barcode scan or gallery image picker succeeds
+     * The result from those intents can be handled appropriate here
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // UPDATE PRODUCT SERIAL AND DESCRIPTION FROM BARCODE
+        // BARCODE OBTAINED FROM BARCODE SCAN FROM CAMERA
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                String barCode = result.getContents();
+                Toast.makeText(requireContext(), "Scanned: " + barCode, Toast.LENGTH_LONG).show();
+
+                // Process the scanned barcode or QR code here
+                itemSerial.setText(result.getContents());
+
+                // Get description from barcode
+                infoFetcher = new ItemInfoFetcher(new NetworkHandler(), requireContext());
+                infoFetcher.fetchProductInfo(barCode, new ItemInfoFetcher.ProductInfoCallback() {
+                    @Override
+                    public void onSuccess(String description) {
+                        itemDescription.setText(description);
+                    }
+                    @Override
+                    public void onError(String error) {
+                        itemDescription.setText(error);
+                    }
+                });
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }
+
