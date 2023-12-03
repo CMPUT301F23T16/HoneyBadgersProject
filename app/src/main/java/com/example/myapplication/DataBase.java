@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,7 +23,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -145,9 +151,38 @@ public class DataBase {
      * @param item Item to be added to the user's item collection in the database
      */
 
-    public void addItem(Item item){
+    public void addItem(Item item,ArrayList<ImageView> photos){
 
         itemsRef.document(item.getName()).set(item);
+        StorageReference storageReference ;
+        for(ImageView imageView:photos)
+        {
+            storageReference = storage.getReference().child("images/"+item.getName()+"/"+(String)imageView.getTag());
+            // Get the data from an ImageView as bytes
+            imageView.setDrawingCacheEnabled(true);
+            imageView.buildDrawingCache();
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            UploadTask uploadTask = storageReference.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.d((String)imageView.getTag(), "onFailure: upload Failed");
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    Log.d((String)imageView.getTag(), "onSuccess: upload Success");
+                    // ...
+                }
+            });
+        }
+
     }
 
     /**
@@ -158,6 +193,8 @@ public class DataBase {
     public void deleteItem(Item item) {
         //also delete their images
         itemsRef.document(item.getName()).delete();
+        StorageReference storageReference = storage.getReference().child("images/"+item.getName()+"/");
+        storageReference.delete();
     }
 
     /**

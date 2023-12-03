@@ -207,12 +207,7 @@ public class PhotosFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
                 .setTitle("Photos")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        getActivity().onBackPressed(); //to be changed has bugs
-                    }
-                })
+                .setPositiveButton("OK", null) //to be changed
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

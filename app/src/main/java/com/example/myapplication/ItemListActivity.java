@@ -235,7 +235,7 @@ PhotosFragment.PhotosInteractionInterface{
      */
     @Override
     public void AddFragmentOKPressed(Item item) {
-        db.addItem(item);
+        db.addItem(item,photos);
 
         Log.d("xxx sort-option", String.format("%s",sort_option));
         Log.d("xxx ascending", String.format("%s",ascending));
@@ -266,7 +266,7 @@ PhotosFragment.PhotosInteractionInterface{
         Log.d("filter-option", String.format("%s",filter_option));
 
         // Add the updated item to DB
-        db.addItem(item);
+        db.addItem(item,photos);
         editing_item = false;
         Log.d("xxx sort-option", String.format("%s",sort_option));
         Log.d("xxx ascending", String.format("%s",ascending));
@@ -312,7 +312,7 @@ PhotosFragment.PhotosInteractionInterface{
     public void addPhoto(Uri uri) {
         ImageView photo = (ImageView) LayoutInflater.from(this).inflate(R.layout.item_image,null,false);
         photo.setImageURI(uri);
-        photo.setTag(uri.getLastPathSegment().toString());
+        photo.setTag(uri.getLastPathSegment().toString()+".png");
         Log.d(uri.getLastPathSegment().toString(), "addPhoto: ");
         photos.add(photo);
     }
