@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -116,7 +117,7 @@ public class EditItemFragment extends DialogFragment {
         itemSerial.setText(clickedItem.getSerial());
         itemPrice.setText(clickedItem.getPrice().toString());
         itemComment.setText(clickedItem.getComment());
-        itemTag.setText(clickedItem.getTag());
+        itemTag.setText(TextUtils.join(",",clickedItem.getTag()));
 
 
         // Coding logic for date picker

@@ -9,7 +9,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -25,7 +27,7 @@ public class Item implements Serializable {
     private String model;
     private String serial;
     private String comment;
-    private String tag;
+    private List<String> tag;
     private String id;
     private boolean isSelected = false;
 
@@ -85,12 +87,15 @@ public class Item implements Serializable {
         this.comment = comment;
     }
 
-    public String getTag() {
+    public List<String> getTag() {
         return tag;
     }
 
     public void setTag(String tag) {
-        this.tag = tag;
+        if (this.tag == null) {
+            this.tag = new ArrayList<>();
+        }
+        this.tag.add(tag);
     }
 
 
@@ -142,7 +147,7 @@ public class Item implements Serializable {
         this.model = model;
         this.serial = serial;
         this.comment = comment;
-        this.tag = tag;
+        this.tag = new ArrayList<>();
     }
 
     /**

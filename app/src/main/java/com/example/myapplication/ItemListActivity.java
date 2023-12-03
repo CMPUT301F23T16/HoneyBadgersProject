@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.DialogFragment;
 
 
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
+
 
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -225,6 +227,7 @@ public class ItemListActivity extends AppCompatActivity
      */
     @Override
     public void AddFragmentOKPressed(Item item) {
+
         db.addItem(item);
 
         Log.d("xxx sort-option", String.format("%s",sort_option));
@@ -266,7 +269,7 @@ public class ItemListActivity extends AppCompatActivity
         this.ascending = ascending;
         this.filter_option = filter_option;
         this.date_from = date_from;
-        this.date_to =date_to;
+        this.date_to = date_to;
 
         // THIS WILL ALSO APPLY THE MOST RECENT SORTING/FILTERING OPTIONS TO VISIBLE LIST
         onItemListUpdate();
@@ -286,12 +289,45 @@ public class ItemListActivity extends AppCompatActivity
     public void onOpenTagFragment() {
         // Create an instance of TagFragment
         TagFragment tagFragment = new TagFragment();
+        // Pass the clicked item index to the TagFragment
+        Bundle bundle = new Bundle();
+        bundle.putInt("clickedItemIndex", clickedItemIndex);
+        tagFragment.setArguments(bundle);
+
         tagFragment.show(getSupportFragmentManager(), "Add Tag(s)");
     }
 
     @Override
     public void onTagSelected(String tag) {
-        System.out.println(tag);
+
+        //System.out.println(tag);
+        // Create an instance of TagFragment
+        TagFragment tagFragment = new TagFragment();
+
+// Pass the clicked item index to the TagFragment
+        Bundle bundle = new Bundle();
+        bundle.putInt("clickedItemIndex", clickedItemIndex);
+        tagFragment.setArguments(bundle);
+
+        // Retrieve the clicked item index from the arguments
+        Bundle receivedBundle = tagFragment.getArguments();
+        if (receivedBundle != null) {
+            int clickedItemIndex = receivedBundle.getInt("clickedItemIndex", -1);
+
+            // Check if the index is valid
+            if (clickedItemIndex != -1 && clickedItemIndex < visibleItems.size()) {
+                Item clickedItem = visibleItems.get(clickedItemIndex);
+
+                // Add the selected tag to the clicked item
+                clickedItem.setTag(tag);
+
+                // Update the item in the database or perform any necessary actions
+                db.updateItem(clickedItem);
+
+                // Notify the adapter of the data change
+                itemListAdapter.notifyDataSetChanged();
+            }
+        }
     }
 }
 

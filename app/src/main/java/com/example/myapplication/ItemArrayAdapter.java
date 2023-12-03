@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapter for items array list. Maps each item's attributes to the screen.
@@ -95,6 +96,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             items.get(itemContent.getAdapterPosition()).setSelected(isChecked);
         }));
 
+        List<String> tags = item.getTag();
     }
 
     /**

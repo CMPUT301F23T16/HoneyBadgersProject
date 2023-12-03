@@ -140,6 +140,18 @@ public class DataBase {
 
         itemsRef.document(item.getName()).set(item);
     }
+    public void updateItem(Item updatedItem) {
+        // Assuming 'getName()' returns the unique identifier for the item
+        String itemName = updatedItem.getName();
+
+        itemsRef.document(itemName).set(updatedItem)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Item updated successfully");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Failed to update item", e);
+                });
+    }
 
     /**
      * Function deletes the input item to the database
