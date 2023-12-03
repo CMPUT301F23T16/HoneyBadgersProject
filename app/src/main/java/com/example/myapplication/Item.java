@@ -31,6 +31,7 @@ public class Item implements Serializable {
     private String id;
     private boolean isSelected = false;
 
+
     public void setName(String name) {
         this.name = name;
     }
@@ -135,7 +136,7 @@ public class Item implements Serializable {
      * This constructor creates a new Item using all fields in Add Item Fragment
      */
     public Item(String name, double price, Date dateAdded, String description, String make,
-                String model, String serial, String comment, String tag) {
+                String model, String serial, String comment, List<String> tag) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(dateAdded);
@@ -148,7 +149,7 @@ public class Item implements Serializable {
         this.model = model;
         this.serial = serial;
         this.comment = comment;
-        this.tag = new ArrayList<>();
+        this.tag = tag;
     }
 
     /**

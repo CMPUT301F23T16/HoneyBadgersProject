@@ -93,9 +93,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         //Set the TextView text for the item
         itemContent.bind(item, position, listener);
 
-//        itemContent.itemName.setText(item.getName());
-//        itemContent.itemDateAdded.setText(item.getDateAdded().toString());
-//        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
+        itemContent.itemName.setText(item.getName());
+        itemContent.itemDateAdded.setText(item.getDateAdded().toString());
+        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
         itemContent.itemSelected.setChecked(item.isSelected());
 
 
@@ -114,8 +114,8 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
 
-        return (filteredItems != null) ? filteredItems.size() : 0;
-        //return items.size();
+        //return (filteredItems != null) ? filteredItems.size() : 0;
+        return items.size();
     }
 
 

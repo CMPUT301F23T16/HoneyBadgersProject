@@ -26,7 +26,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Class encapsulates business logic for the AddItemFragment
@@ -166,8 +168,7 @@ public class AddItemFragment extends DialogFragment{
                 String model = itemModel.getText().toString();
                 String serial = itemSerial.getText().toString();
                 String comment = itemComment.getText().toString();
-                String tag = itemTag.getText().toString();
-
+                List<String> tag = new ArrayList<>(); //FixMe
                 if (name.trim().length() == 0){
                     Toast.makeText(requireContext(), "Please input an item name!", Toast.LENGTH_SHORT).show();
                 }

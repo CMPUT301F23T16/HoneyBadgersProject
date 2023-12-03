@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -7,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+//import com.google.common.reflect.TypeToken;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.time.format.DateTimeFormatter;
@@ -81,7 +85,7 @@ public class DataBase {
                         String model = doc.getString("model");
                         String serial = doc.getString("serial");
                         String comment = doc.getString("comment");
-                        String tag = doc.getString("tag");
+                        List<String> tag = (List<String>) doc.get("tag");
 
                         Item temp = new Item(name, price, date, description, make,
                                 model, serial, comment, tag);
