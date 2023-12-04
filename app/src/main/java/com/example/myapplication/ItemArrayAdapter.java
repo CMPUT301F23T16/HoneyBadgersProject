@@ -127,6 +127,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         TextView itemDateAdded;
         TextView itemPrice;
         CheckBox itemSelected;
+        TextView itemTag;
 
 
         /**
@@ -141,6 +142,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             itemDateAdded = itemView.findViewById(R.id.item).findViewById(R.id.item_date);
             itemPrice = itemView.findViewById(R.id.item).findViewById(R.id.item_price);
             itemSelected = itemView.findViewById(R.id.check_box);
+            itemTag = itemView.findViewById(R.id.item_tag);
 
             itemSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 int adapterPosition = getAdapterPosition();
