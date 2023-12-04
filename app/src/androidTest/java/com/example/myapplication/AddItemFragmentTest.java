@@ -71,13 +71,7 @@ public class AddItemFragmentTest {
         appCompatEditText3.perform(replaceText("test_add"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText4 = onView(
-                allOf(withId(R.id.add_item_date),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.custom),
-                                        0),
-                                1),
-                        isDisplayed()));
+                allOf(withId(R.id.add_item_date), isDisplayed()));
         appCompatEditText4.perform(replaceText("2023-04-22"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText5 = onView(
@@ -100,23 +94,11 @@ public class AddItemFragmentTest {
         appCompatEditText9.perform(replaceText("23"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText10 = onView(
-                allOf(withId(R.id.add_item_comment),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.custom),
-                                        0),
-                                7),
-                        isDisplayed()));
+                allOf(withId(R.id.add_item_comment), isDisplayed()));
         appCompatEditText10.perform(replaceText("test"), closeSoftKeyboard());
 
 
-        ViewInteraction materialButton2 = onView(
-                allOf(withId(android.R.id.button1), withText("OK"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.ScrollView")),
-                                        0),
-                                3)));
+        ViewInteraction materialButton2 = onView(withId(android.R.id.button1));
         materialButton2.perform(scrollTo(), click());
 
         Thread.sleep(rand);

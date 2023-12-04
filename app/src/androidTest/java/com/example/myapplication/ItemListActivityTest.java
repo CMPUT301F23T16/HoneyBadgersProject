@@ -116,13 +116,7 @@ public class ItemListActivityTest {
             appCompatEditText37.perform(replaceText("1234.00"), closeSoftKeyboard());
 
 
-            ViewInteraction materialButton3 = onView(
-                    Matchers.allOf(withId(android.R.id.button1), withText("OK"),
-                            childAtPosition(
-                                    childAtPosition(
-                                            withClassName(is("android.widget.ScrollView")),
-                                            0),
-                                    3)));
+            ViewInteraction materialButton3 = onView(withId(android.R.id.button1));
             materialButton3.perform(scrollTo(), click());
 
             Thread.sleep(rand);
