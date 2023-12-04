@@ -34,6 +34,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     private List<Item> filteredItems;
 
 
+
     /**
      * Initializes class members only
      *
@@ -168,6 +169,8 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
 
             itemPrice.setText(String.format("$%.2f", item.getPrice()));
 
+            String tagsString = (item.getTag() != null) ? String.join(", ", item.getTag()) : "";
+            itemTag.setText(tagsString);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
