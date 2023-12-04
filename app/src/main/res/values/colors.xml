@@ -5,4 +5,6 @@
     <color name="blue">#FF4B9CD7</color>
     <color name="transparent">#00000000</color>
     <color name="green">#FFCBF3C5</color>
+    <color name="grey">#D3D3D3</color>
+    <color name="dark_grey">#DDD8D8</color>
 </resources>

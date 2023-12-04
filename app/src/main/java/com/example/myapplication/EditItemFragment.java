@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -29,6 +33,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -44,12 +50,13 @@ public class EditItemFragment extends DialogFragment {
     private EditText itemSerial;
     private EditText itemPrice;
     private EditText itemComment;
-    private EditText itemTag;
+    public TextView itemTag;
     private Button scan_button;
     private ItemInfoFetcher infoFetcher;
 
     private DatePickerDialog datePickerDialog;
     private EditItemInteractionInterface listener;
+    private TagFragmentListener tagFragmentListener;
 
     /**
      * This method is attaches the Activity to an attribute of the fragment
@@ -58,11 +65,18 @@ public class EditItemFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        ((ItemListActivity) context).editItemFragment = this;
         if (context instanceof EditItemInteractionInterface) {
             listener = (EditItemInteractionInterface) context;
         }
         else {
             throw new RuntimeException(context.toString() + "OnFragmentInteractionListener is not implemented");
+        }
+        if (context instanceof TagFragmentListener) {
+            tagFragmentListener = (TagFragmentListener) context;
+        }
+        else {
+            throw new RuntimeException(context.toString() + "TagFragmentListener is not implemented");
         }
     }
 
@@ -114,7 +128,7 @@ public class EditItemFragment extends DialogFragment {
         itemSerial = view.findViewById(R.id.add_item_serial_number);
         itemPrice = view.findViewById(R.id.add_item_price);
         itemComment = view.findViewById(R.id.add_item_comment);
-        itemTag = view.findViewById(R.id.add_item_tag_spinner);
+        itemTag = view.findViewById(R.id.add_item_tag);
         scan_button = view.findViewById(R.id.scan_button);
 
         // Get clicked on item from bundle and set view values
@@ -127,7 +141,14 @@ public class EditItemFragment extends DialogFragment {
         itemSerial.setText(clickedItem.getSerial());
         itemPrice.setText(clickedItem.getPrice().toString());
         itemComment.setText(clickedItem.getComment());
-        itemTag.setText(clickedItem.getTag());
+        itemTag.setText(TextUtils.join(",",clickedItem.getTag()));
+
+        itemTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTagFragment();
+            }
+        });
 
 
         // BUTTON CLICK TRIGGERS ZXING BARCODE SCANNER
@@ -175,7 +196,7 @@ public class EditItemFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
-                .setTitle("Add/edit item")
+                .setTitle("Edit item")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -210,7 +231,7 @@ public class EditItemFragment extends DialogFragment {
                 String model = itemModel.getText().toString();
                 String serial = itemSerial.getText().toString();
                 String comment = itemComment.getText().toString();
-                String tag = itemTag.getText().toString();
+                List<String> tag = Arrays.asList(itemTag.getText().toString().split(","));
 
                 if (name.trim().length() == 0){
                     Toast.makeText(requireContext(), "Please input an item name!", Toast.LENGTH_SHORT).show();
@@ -239,6 +260,12 @@ public class EditItemFragment extends DialogFragment {
 
         return dialogue;
     }
+    private void openTagFragment(){
+        tagFragmentListener.onOpenTagFragment();
+    }
+
+
+
 
     private void saveState() {
         String name = itemName.getText().toString();
@@ -249,7 +276,7 @@ public class EditItemFragment extends DialogFragment {
         String model = itemModel.getText().toString();
         String serial = itemSerial.getText().toString();
         String comment = itemComment.getText().toString();
-        String tag = itemTag.getText().toString();
+        List<String> tag = Arrays.asList(itemTag.getText().toString().split(","));
         try {
             if (dateAdded.trim().length() == 0)
                 listener.saveTemporaryState(new Item(name, price.trim().length() == 0 ? -1 : Double.parseDouble(price), "",

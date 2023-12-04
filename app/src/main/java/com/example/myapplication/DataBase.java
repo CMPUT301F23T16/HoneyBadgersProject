@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -33,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.time.format.DateTimeFormatter;
@@ -98,7 +98,7 @@ public class DataBase {
                         String model = doc.getString("model");
                         String serial = doc.getString("serial");
                         String comment = doc.getString("comment");
-                        String tag = doc.getString("tag");
+                        List<String> tag = (List<String>) doc.get("tag");
                         List<String> image_refs = (List<String>) doc.get("imageRefs");
 
                         Item temp = new Item(name, price, date, description, make,
@@ -199,6 +199,18 @@ public class DataBase {
             });
         }
 
+    }
+    public void updateItem(Item updatedItem) {
+        // Assuming 'getName()' returns the unique identifier for the item
+        String itemName = updatedItem.getName();
+
+        itemsRef.document(itemName).set(updatedItem)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Item updated successfully");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Failed to update item", e);
+                });
     }
 
     /**

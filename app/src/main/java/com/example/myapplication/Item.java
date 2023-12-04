@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,10 +27,11 @@ public class  Item implements Serializable {
     private String model;
     private String serial;
     private String comment;
-    private String tag;
+    private List<String> tag;
     private String id;
     private boolean isSelected = false;
     private List<String> image_refs;
+
 
     public void setName(String name) {
         this.name = name;
@@ -87,12 +89,15 @@ public class  Item implements Serializable {
         this.comment = comment;
     }
 
-    public String getTag() {
+    public List<String> getTag() {
         return tag;
     }
 
     public void setTag(String tag) {
-        this.tag = tag;
+        if (this.tag == null) {
+            this.tag = new ArrayList<>();
+        }
+        this.tag.add(tag);
     }
 
 
@@ -131,7 +136,7 @@ public class  Item implements Serializable {
      * This constructor creates a new Item using all fields in Add Item Fragment
      */
     public Item(String name, double price, Date dateAdded, String description, String make,
-                String model, String serial, String comment, String tag,List<String> image_references) {
+                String model, String serial, String comment, List<String> tag,List<String> image_references) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(dateAdded);
@@ -148,7 +153,7 @@ public class  Item implements Serializable {
         this.image_refs = image_references;
     }
     public Item(String name, double price, String dateAdded, String description, String make,
-                String model, String serial, String comment, String tag, List<String> image_references) {
+                String model, String serial, String comment, List<String> tag, List<String> image_references) {
 
 
 

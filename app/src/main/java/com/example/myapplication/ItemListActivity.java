@@ -1,9 +1,9 @@
 package com.example.myapplication;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.DialogFragment;
 
 
 import android.content.Intent;
@@ -14,20 +14,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +45,9 @@ public class ItemListActivity extends AppCompatActivity
         AddItemFragment.AddItemInteractionInterface,
         EditItemFragment.EditItemInteractionInterface,
         SortFilterFragment.SortFilterInteractionInterface,
-PhotosFragment.PhotosInteractionInterface{
+        TagFragmentListener,
+        TagFragment.TagSelectionListener,
+        PhotosFragment.PhotosInteractionInterface{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
@@ -62,6 +66,7 @@ PhotosFragment.PhotosInteractionInterface{
 
     private String date_from;
     private String date_to;
+    public EditItemFragment editItemFragment;
     private File directory;
     private ArrayList<ImageView> photos;
     private boolean editing_item = false;
@@ -99,6 +104,10 @@ PhotosFragment.PhotosInteractionInterface{
         sortFilterButton = findViewById(R.id.sort_filter_button);
         visibleItems = db.getItemList();
 
+        //initialize the list of tags
+        List<String> tags = new ArrayList<>();
+        tags.add("Bedroom");
+        tags.add("Kitchen");
 
         //Create the viewable item list
         itemListView = findViewById(R.id.item_list);
@@ -145,6 +154,9 @@ PhotosFragment.PhotosInteractionInterface{
             }
         });
     }
+
+
+
 
     /**
      * This method creates and displays a confirmation dialog for deleting items. It asks the user to confirm/cancel the deletion action before proceeding further.
@@ -304,6 +316,7 @@ PhotosFragment.PhotosInteractionInterface{
         Log.d("filter-option", String.format("%s",filter_option));
     }
 
+
     /**
      * Sorts the visible item list using sort options received from the SortFilterFragment
      * @param sort_option whether to sort by date, value, description or name
@@ -318,7 +331,7 @@ PhotosFragment.PhotosInteractionInterface{
         this.ascending = ascending;
         this.filter_option = filter_option;
         this.date_from = date_from;
-        this.date_to =date_to;
+        this.date_to = date_to;
 
         // THIS WILL ALSO APPLY THE MOST RECENT SORTING/FILTERING OPTIONS TO VISIBLE LIST
         onItemListUpdate();
@@ -334,6 +347,52 @@ PhotosFragment.PhotosInteractionInterface{
         finish(); // Call this when your activity is done and should be closed.
     }
 
+    @Override
+    public void onOpenTagFragment() {
+        // Create an instance of TagFragment
+        TagFragment tagFragment = new TagFragment();
+        // Pass the clicked item index to the TagFragment
+        Bundle bundle = new Bundle();
+        bundle.putInt("clickedItemIndex", clickedItemIndex);
+        tagFragment.setArguments(bundle);
+
+        tagFragment.show(getSupportFragmentManager(), "Add Tag(s)");
+    }
+
+    @Override
+    public void onTagSelected(String tag) {
+        //System.out.println(tag);
+        // Create an instance of TagFragment
+        TagFragment tagFragment = new TagFragment();
+
+        // Pass the clicked item index to the TagFragment
+        Bundle bundle = new Bundle();
+        bundle.putInt("clickedItemIndex", clickedItemIndex);
+        tagFragment.setArguments(bundle);
+
+        // Retrieve the clicked item index from the arguments
+        Bundle receivedBundle = tagFragment.getArguments();
+        if (receivedBundle != null) {
+            int clickedItemIndex = receivedBundle.getInt("clickedItemIndex", -1);
+
+            // Check if the index is valid
+            if (clickedItemIndex != -1 && clickedItemIndex < visibleItems.size()) {
+                Item clickedItem = visibleItems.get(clickedItemIndex);
+
+                // Add the selected tag to the clicked item
+
+                clickedItem.setTag(tag);
+
+                // Update the item in the database or perform any necessary actions
+                db.updateItem(clickedItem);
+                String currentTag = editItemFragment.itemTag.getText().toString();
+                String newTag = currentTag.length() == 0 ?tag:currentTag + ',' + tag;
+                editItemFragment.itemTag.setText(newTag);
+
+
+            }
+        }
+    }
     /**
      * Returns the working directory of the app
      * @return File object for directory

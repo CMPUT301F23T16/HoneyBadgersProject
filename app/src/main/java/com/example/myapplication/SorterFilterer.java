@@ -108,9 +108,20 @@ public class SorterFilterer {
             return filteredList;
         }
 
+
         //If no filtering is applied, original list is returned
         return list;
     }
+    public static ArrayList<Item> filterByTag(ArrayList<Item> list, String tag) {
+        ArrayList<Item> filteredList = new ArrayList<>();
+        for (Item item : list) {
+            if (!item.getTag().contains(tag)) {
+                filteredList.add(item);
+            }
+        }
+        return filteredList;
+    }
+
     public static boolean isDateInRange(String itemDate, String date_from, String date_to) {
 
 

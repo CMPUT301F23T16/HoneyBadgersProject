@@ -110,17 +110,6 @@ public class EditItemFragmentTest {
                         isDisplayed()));
         appCompatEditText10.perform(replaceText("test"), closeSoftKeyboard());
 
-
-        ViewInteraction appCompatEditText14 = onView(
-                allOf(withId(R.id.add_item_tag_spinner),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.custom),
-                                        0),
-                                8),
-                        isDisplayed()));
-        appCompatEditText14.perform(replaceText("test"), closeSoftKeyboard());
-
         ViewInteraction materialButton2 = onView(
                 allOf(withId(android.R.id.button1), withText("OK"),
                         childAtPosition(

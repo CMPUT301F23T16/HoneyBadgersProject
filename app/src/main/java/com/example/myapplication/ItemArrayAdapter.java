@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapter for items array list. Maps each item's attributes to the screen.
@@ -30,6 +31,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
     private ArrayList<Item> items;
     private Context context;
     private final OnItemClickListener listener;
+    private List<Item> filteredItems;
 
 
     /**
@@ -43,6 +45,12 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         this.context = context;
         this.listener = listener;
     }
+    // Update the filtered items and notify the adapter
+    public void updateFilteredItems(List<Item> filteredItems) {
+        this.filteredItems = filteredItems;
+        notifyDataSetChanged();
+    }
+
 
     /**
      * This will unselect the checkboxes once the delete functionality is implemented/ dialog box closes
@@ -85,9 +93,9 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
         //Set the TextView text for the item
         itemContent.bind(item, position, listener);
 
-//        itemContent.itemName.setText(item.getName());
-//        itemContent.itemDateAdded.setText(item.getDateAdded().toString());
-//        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
+        itemContent.itemName.setText(item.getName());
+        itemContent.itemDateAdded.setText(item.getDateAdded().toString());
+        itemContent.itemPrice.setText(String.format("$%.2f", item.getPrice()));
         itemContent.itemSelected.setChecked(item.isSelected());
 
 
@@ -95,6 +103,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
             items.get(itemContent.getAdapterPosition()).setSelected(isChecked);
         }));
 
+        List<String> tags = item.getTag();
     }
 
     /**
@@ -104,8 +113,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter {
      */
     @Override
     public int getItemCount() {
+
+        //return (filteredItems != null) ? filteredItems.size() : 0;
         return items.size();
     }
+
 
     /**
      * This class maps each text view (item attribute) in item_content to its attributes
