@@ -18,7 +18,7 @@ public class NetworkHandler {
      * @param url The URL for the HTTP request.
      * @return The HttpURLConnection object.
      */
-    private HttpURLConnection setupConnection(URL url) {
+    public HttpURLConnection setupConnection(URL url) {
         HttpURLConnection urlConnection;
         String API_KEY = "ad5c40df65mshba2972e2b4bd264p1df5f1jsnae362888b3bb";
         try {
@@ -37,7 +37,7 @@ public class NetworkHandler {
      * @return The response string.
      * @throws IOException If an I/O error occurs.
      */
-    private String readResponse(HttpURLConnection connection) throws IOException {
+    public String readResponse(HttpURLConnection connection) throws IOException {
         StringBuilder result = new StringBuilder();
 
         InputStream inStream = new BufferedInputStream(connection.getInputStream());
