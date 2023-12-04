@@ -108,6 +108,9 @@ public class PhotosFragment extends DialogFragment {
         public PhotoArrayAdapter getGridAdapter();
         public void resetPhotos();
         public void removePhoto(int pos);
+        public void setReloadingImagesToTrue();
+        public boolean getEditingItem();
+        public Item getTemporaryState();
 
     }
 
@@ -123,6 +126,12 @@ public class PhotosFragment extends DialogFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        photo_adapter.notifyDataSetChanged();
+        super.onResume();
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -132,6 +141,7 @@ public class PhotosFragment extends DialogFragment {
         grid_view = view.findViewById(R.id.photo_grid);
         photo_adapter = listener.getGridAdapter();
         grid_view.setAdapter(photo_adapter);
+        photo_adapter.notifyDataSetChanged();
 
 
 
@@ -207,12 +217,24 @@ public class PhotosFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
                 .setTitle("Photos")
-                .setPositiveButton("OK", null) //to be changed
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.setReloadingImagesToTrue();
+                        if(listener.getEditingItem())
+                            EditItemFragment.newInstance(listener.getTemporaryState()).show(getActivity().getSupportFragmentManager(), "Edit Item");
+                        else
+                            new AddItemFragment().show(getActivity().getSupportFragmentManager(), "ADD_ITEM");
+                    }
+                }) //to be changed
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.resetPhotos();
-
+                        if(listener.getEditingItem())
+                            EditItemFragment.newInstance(listener.getTemporaryState()).show(getActivity().getSupportFragmentManager(), "Edit Item");
+                        else
+                            new AddItemFragment().show(getActivity().getSupportFragmentManager(), "ADD_ITEM");
                     }
                 })
         ;

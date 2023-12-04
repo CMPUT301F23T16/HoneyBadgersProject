@@ -65,6 +65,8 @@ PhotosFragment.PhotosInteractionInterface{
     private File directory;
     private ArrayList<ImageView> photos;
     private boolean editing_item = false;
+    private Item temporary_item = null;
+    private boolean reloading_images=false;
 
 
     /**
@@ -106,6 +108,8 @@ PhotosFragment.PhotosInteractionInterface{
             public void onItemClick(Item item, int position) {
                 clickedItemIndex = position;
                 editing_item = true;
+                reloading_images=false;
+                temporary_item = null;
                 EditItemFragment.newInstance(item).show(getSupportFragmentManager(), "Edit Item");
             }
         });
@@ -120,6 +124,9 @@ PhotosFragment.PhotosInteractionInterface{
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                editing_item=false;
+                reloading_images=false;
+                temporary_item = null;
                 new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
             }
         });
@@ -174,7 +181,7 @@ PhotosFragment.PhotosInteractionInterface{
                 Item item = itemList.get(i);
                 if (item.isSelected()){
                     //If the item is selected, delete it from the database using its name.
-                    db.deleteSelectedItem(item.getName(),this);
+                    db.deleteSelectedItem(item,this);
                 }
 
             }
@@ -243,13 +250,25 @@ PhotosFragment.PhotosInteractionInterface{
     }
 
     @Override
-    public String[] getPhotoReferences() {
+    public List<String> getPhotoReferences() {
+        if(photos==null)
+            return null;
         ArrayList<String> references = new ArrayList<>();
         for(ImageView i:photos)
         {
             references.add((String) i.getTag());
         }
-        return (String[]) references.toArray();
+        return references;
+    }
+
+    @Override
+    public void saveTemporaryState(Item item) {
+        temporary_item=item;
+    }
+
+    @Override
+    public Item getTemporaryState() {
+        return temporary_item;
     }
 
     /**
@@ -312,25 +331,38 @@ PhotosFragment.PhotosInteractionInterface{
     public void addPhoto(Uri uri) {
         ImageView photo = (ImageView) LayoutInflater.from(this).inflate(R.layout.item_image,null,false);
         photo.setImageURI(uri);
-        photo.setTag(uri.getLastPathSegment().toString()+".png");
+        photo.setTag(uri.getLastPathSegment().toString());
         Log.d(uri.getLastPathSegment().toString(), "addPhoto: ");
         photos.add(photo);
     }
 
     @Override
     public PhotoArrayAdapter getGridAdapter() {
-        photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):new ArrayList<ImageView>();
+        if(!reloading_images)
+            photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):new ArrayList<ImageView>();
         return new PhotoArrayAdapter(this,photos);
     }
 
     @Override
     public void resetPhotos() {
-        photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):null;
+        photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):new ArrayList<ImageView>();
     }
     @Override
     public void removePhoto(int position)
     {
+        if(editing_item)
+            db.deletePhoto(visibleItems.get(position),photos.get(position));
         photos.remove(position);
+    }
+
+    @Override
+    public void setReloadingImagesToTrue() {
+        reloading_images=true;
+    }
+
+    @Override
+    public boolean getEditingItem() {
+        return editing_item;
     }
 }
 

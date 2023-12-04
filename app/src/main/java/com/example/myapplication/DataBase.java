@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.bumptech.glide.Glide;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -61,6 +63,7 @@ public class DataBase {
     public DataBase(String userName, ItemListActivity context) {
         this.itemList = new ArrayList<>();
 
+        this.storage = FirebaseStorage.getInstance();
         this.db = FirebaseFirestore.getInstance();
         this.itemsRef = db.collection(userName); // Each user has their own collection
 
@@ -96,7 +99,7 @@ public class DataBase {
                         String serial = doc.getString("serial");
                         String comment = doc.getString("comment");
                         String tag = doc.getString("tag");
-                        String[] image_refs = (String[])doc.get("imageRefs");
+                        List<String> image_refs = (List<String>) doc.get("imageRefs");
 
                         Item temp = new Item(name, price, date, description, make,
                                 model, serial, comment, tag,image_refs);
@@ -119,12 +122,23 @@ public class DataBase {
      * @param itemName The name os the item which is to be deleted
      * @param context The context from which this method is called, typically the current Activity.
      */
-    public void deleteSelectedItem(String itemName, ItemListActivity context){
-        itemsRef.document(itemName).delete() //also delete their images
+    public void deleteSelectedItem(Item item, ItemListActivity context){
+        List<String> image_reference = item.getImageRefs();
+        itemsRef.document(item.getName()).delete() //also delete their images
                 //This will be executed if the document deletion is successful.
 
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
+                    Log.d("Deleteing Images", "deleteSelectedItem: ");
+                    if(image_reference==null)
+                        return;
+                    StorageReference storageReference = storage.getReference().child("images/"+item.getName());
+                    for(String s:image_reference)
+                    {
+                        storageReference.child(s).delete();
+                    }
+                    //storageReference.delete();
+                    Log.d("Image Deleted", "deleteSelectedItem: ");
 
                 })
 
@@ -155,6 +169,8 @@ public class DataBase {
 
         itemsRef.document(item.getName()).set(item);
         StorageReference storageReference ;
+        if(photos==null)
+            return;
         for(ImageView imageView:photos)
         {
             storageReference = storage.getReference().child("images/"+item.getName()+"/"+(String)imageView.getTag());
@@ -163,7 +179,7 @@ public class DataBase {
             imageView.buildDrawingCache();
             Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 30, baos);
             byte[] data = baos.toByteArray();
 
             UploadTask uploadTask = storageReference.putBytes(data);
@@ -192,9 +208,18 @@ public class DataBase {
      */
     public void deleteItem(Item item) {
         //also delete their images
+        List<String> image_reference = item.getImageRefs();
         itemsRef.document(item.getName()).delete();
-        StorageReference storageReference = storage.getReference().child("images/"+item.getName()+"/");
-        storageReference.delete();
+        Log.d("Deleteing Images", "deleteSelectedItem: ");
+        if(image_reference==null)
+            return;
+        StorageReference storageReference = storage.getReference().child("images/"+item.getName());
+        for(String s:image_reference)
+        {
+            storageReference.child(s).delete();
+        }
+        //storageReference.delete();
+        Log.d("Image Deleted", "deleteSelectedItem: ");
     }
 
     /**
@@ -209,20 +234,43 @@ public class DataBase {
     public ArrayList<ImageView> getItemImages(Context context, Item item)
     {
         ArrayList<ImageView> image_views = new ArrayList<>();
-        for(String s: item.getImageRefs()) {
+        List<String> image_references = item.getImageRefs();
+        if(image_references == null)
+            return new ArrayList<ImageView>();
+        for(String s: image_references) {
             StorageReference storageReference = storage.getReference().child("images/"+item.getName()+"/"+s);
+            Log.d("images/"+item.getName()+"/"+s, "getItemImages: ");
 
             ImageView image_view = (ImageView) LayoutInflater.from(context).inflate(R.layout.item_image, null, false);
 
 
-            Glide.with(context)
-                    .load(storageReference)
-                    .into(image_view);
-            image_view.setTag(s);
-            image_views.add(image_view);
+            final long ONE_MEGABYTE = 1024 * 1024;
+            storageReference.getBytes(20*ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    // Data for "images/island.jpg" is returns, use this as needed
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, 1000, 1400, false));
+                    image_view.setTag(s);
+                    image_views.add(image_view);
+                    Log.d("Image Loaded", "onSuccess: ");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(Exception exception) {
+                    // Handle any errors
+                    Log.d("IMAGE NOT LOADED", "onFailure: ");
+                }
+            });
+
         }
+        Log.d("DONE", "getItemImages: ");
         return image_views;
 
 
+    }
+    public void deletePhoto(Item item,ImageView imageView)
+    {
+        storage.getReference().child("images/"+item.getName()+"/"+(String)imageView.getTag()).delete();
     }
 }
