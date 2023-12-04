@@ -188,6 +188,11 @@ public class AddItemFragment extends DialogFragment {
 
         return dialogue;
     }
+
+    /**
+     * Method to save the state of the fragment to a temporary Item
+     * calls listener.saveTemporaryState
+     */
     private void saveState(){
         String name = itemName.getText().toString();
         String price = itemPrice.getText().toString();
@@ -209,6 +214,11 @@ public class AddItemFragment extends DialogFragment {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Reloads the state of the fragment from a temporary item (fills the fields accordingly)
+     * calls listener.getTemporaryState()
+     */
     private void reloadState()
     {
         Item temp = listener.getTemporaryState();

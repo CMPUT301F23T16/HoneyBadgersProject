@@ -227,10 +227,18 @@ public class  Item implements Serializable {
         this.id = id;
     }
 
+    /**
+     * Getter method for Image References
+     * @return a list of strings for image references
+     */
     public List<String> getImageRefs() {
         return image_refs;
     }
 
+    /**
+     * Setter method for Image References
+     * @param imageRefs List of STrings for image references
+     */
     public void setImageRefs(List<String> imageRefs) {
         this.image_refs = imageRefs;
     }

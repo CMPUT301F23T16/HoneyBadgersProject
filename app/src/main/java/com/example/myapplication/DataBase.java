@@ -118,7 +118,7 @@ public class DataBase {
     }
 
     /**
-     * This will delete an item from Firestore database
+     * This will delete an item from Firestore database + its images
      * @param item The item which is to be deleted
      * @param context The context from which this method is called, typically the current Activity.
      */
@@ -163,6 +163,7 @@ public class DataBase {
      * Function adds the input item to the database
      *
      * @param item Item to be added to the user's item collection in the database
+     * @param photos Imageviews to be stored to firestore storage as images
      */
 
     public void addItem(Item item,ArrayList<ImageView> photos){
@@ -202,7 +203,7 @@ public class DataBase {
     }
 
     /**
-     * Function deletes the input item to the database
+     * Function deletes the input item to the database + its images
      *
      * @param item Item to be deleted from the user's item collection in the database
      */
@@ -231,6 +232,14 @@ public class DataBase {
          */
         public void onItemListUpdate();
     }
+
+    /**
+     * Returns an ImageView list corresponding to the Item images stored in firestore storage
+     *
+     * @param context Parent object
+     * @param item Item for which ImageViews are needed
+     * @return  an ImageView list for images of that Item
+     */
     public ArrayList<ImageView> getItemImages(Context context, Item item)
     {
         ArrayList<ImageView> image_views = new ArrayList<>();
@@ -273,6 +282,12 @@ public class DataBase {
 
 
     }
+
+    /**
+     * Delete a photograph from the firestore storage
+     * @param item Item for which image is to be deleted
+     * @param imageView ImageView corresponding to the Image to be deleted
+     */
     public void deletePhoto(Item item,ImageView imageView)
     {
         storage.getReference().child("images/"+item.getName()+"/"+(String)imageView.getTag()).delete();

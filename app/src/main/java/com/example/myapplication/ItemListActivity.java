@@ -237,7 +237,7 @@ PhotosFragment.PhotosInteractionInterface{
     }
 
     /**
-     * Adds the item received from the AddItemFragment to the user's item collection in DB
+     * Adds the item received from the AddItemFragment to the user's item collection in DB, also adds its photos
      * @param item item to be added to users item collection in DB
      */
     @Override
@@ -249,6 +249,10 @@ PhotosFragment.PhotosInteractionInterface{
         Log.d("filter-option", String.format("%s",filter_option));
     }
 
+    /**
+     * Creates a list of strings for photo references corresponding to the local List of ImageViews
+     * @return a list of strings for photo references
+     */
     @Override
     public List<String> getPhotoReferences() {
         if(photos==null)
@@ -261,11 +265,19 @@ PhotosFragment.PhotosInteractionInterface{
         return references;
     }
 
+    /**
+     * Setter method for Temporary Itemobject
+     * @param item temporary state of the item
+     */
     @Override
     public void saveTemporaryState(Item item) {
         temporary_item=item;
     }
 
+    /**
+     * Return the Temporary Item object stored
+     * @return
+     */
     @Override
     public Item getTemporaryState() {
         return temporary_item;
@@ -273,7 +285,7 @@ PhotosFragment.PhotosInteractionInterface{
 
     /**
      * Updates an item in the user's item collection (in DB)
-     *      using updated item received from EditItemFragment
+     *      using updated item received from EditItemFragment, also changes the imaages in DB
      * @param item item to be replaced in the user's item collection in DB
      */
     @Override
@@ -322,11 +334,19 @@ PhotosFragment.PhotosInteractionInterface{
         finish(); // Call this when your activity is done and should be closed.
     }
 
+    /**
+     * Returns the working directory of the app
+     * @return File object for directory
+     */
     @Override
     public File getDirectory() {
         return directory;
     }
 
+    /**
+     * Adds an ImageView to the local list
+     * @param uri Uri of the Image to be added
+     */
     @Override
     public void addPhoto(Uri uri) {
         ImageView photo = (ImageView) LayoutInflater.from(this).inflate(R.layout.item_image,null,false);
@@ -336,6 +356,10 @@ PhotosFragment.PhotosInteractionInterface{
         photos.add(photo);
     }
 
+    /**
+     * Returns PhotoArrayAdapter object linked to the local list of ImageViews photos
+     * @return PhotoArrayAdapter object
+     */
     @Override
     public PhotoArrayAdapter getGridAdapter() {
         if(!reloading_images)
@@ -343,25 +367,42 @@ PhotosFragment.PhotosInteractionInterface{
         return new PhotoArrayAdapter(this,photos);
     }
 
+    /**
+     * Resets the local list of ImageViews to default
+     */
     @Override
     public void resetPhotos() {
         photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):new ArrayList<ImageView>();
     }
+
+    /**
+     * Removes the selected photo from local list and calls db.deletePhoto() to remove it from the database
+     * @param position index of photo to be removed in the local list
+     */
     @Override
     public void removePhoto(int position)
     {
         if(editing_item) {
-            visibleItems.get(clickedItemIndex).getImageRefs().remove(position);
+
             db.deletePhoto(visibleItems.get(clickedItemIndex), photos.get(position));
+            visibleItems.get(clickedItemIndex).getImageRefs().remove(position);
         }
         photos.remove(position);
     }
 
+    /**
+     * Sets Reloading Images to true to tell user is not opening the add/edit item fragment for the first time
+     */
     @Override
     public void setReloadingImagesToTrue() {
         reloading_images=true;
     }
 
+    /**
+     * Method to see if the user is editing an Item
+     * @return true if user is editing Item, false otherwise
+     *
+     */
     @Override
     public boolean getEditingItem() {
         return editing_item;

@@ -46,6 +46,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.util.Calendar;
 
+/**
+ * Fragment for Viewing/Editing/Adding/Deleting Photos extends DialogFragment
+ */
 public class PhotosFragment extends DialogFragment {
     private FloatingActionButton photo_camera_button;
     private FloatingActionButton photo_gallery_button;
@@ -115,6 +118,10 @@ public class PhotosFragment extends DialogFragment {
     }
 
 
+    /**
+     * On attach method for fragment
+     * @param context context object
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -126,12 +133,22 @@ public class PhotosFragment extends DialogFragment {
         }
     }
 
+    /**
+     * OnResume Method for fragment
+     */
     @Override
     public void onResume() {
         photo_adapter.notifyDataSetChanged();
         super.onResume();
     }
 
+    /**
+     * OnCreateDialog method for fragment
+     * @param savedInstanceState The last saved instance state of the Fragment,
+     * or null if this is a freshly created Fragment.
+     *
+     * @return
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
