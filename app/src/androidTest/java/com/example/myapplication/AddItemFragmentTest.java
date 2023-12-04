@@ -1,98 +1,178 @@
 package com.example.myapplication;
 
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingResource;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.idling.CountingIdlingResource;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.junit.FixMethodOrder;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.AllOf;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
-@RunWith(AndroidJUnit4.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+import java.util.Random;
+
 @LargeTest
+@RunWith(AndroidJUnit4.class)
 public class AddItemFragmentTest {
-
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference itemsRef = db.collection("Adi");
+    public int rand = 2000 + (new Random().nextInt(1000));
 
     @Rule
-    public IntentsTestRule<ItemListActivity> activityRule = new
-            IntentsTestRule<>(ItemListActivity.class);
+    public ActivityScenarioRule<LoginSignupActivity> mActivityScenarioRule =
+            new ActivityScenarioRule<>(LoginSignupActivity.class);
 
-    private IdlingResource idlingResource = new CountingIdlingResource("API Idling Resource");
+    @Before
+    public void login_user() throws InterruptedException {
 
+        // Enter correct credentials
+        onView(withId(R.id.loginEmail)).perform(typeText("bushra1@ualberta.ca"));
+        onView(withId(R.id.loginPassword)).perform(typeText("Kikos100$"), closeSoftKeyboard());
+
+        // Perform a click on the login button
+        onView(withId(R.id.buttonLoginSubmit)).perform(click());
+        Thread.sleep(rand);
+    }
 
     @Test
-    public void test_1_check_add_fragment_fields() throws InterruptedException {
-        //TODO will need to setup mocks for this but this is fine for now
+    public void addItemTest() throws InterruptedException {
 
-        //The database's API takes some time to return the data.
-        //this is to ensure that it gets enough time.
-        //TODO ideally something which specifically waits for the response would be used
-        Thread.sleep(1000);
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.add_item_button), withText("+"),isDisplayed()));
+        appCompatButton.perform(click());
 
-        // Check if Add button is present on ItemListView
-        onView(withId(R.id.add_item_button)).check(matches(isDisplayed()));
+        ViewInteraction appCompatEditText3 = onView(
+                allOf(withId(R.id.add_item_name), isDisplayed()));
+        appCompatEditText3.perform(replaceText("test_add"), closeSoftKeyboard());
 
-        // Click on Add Button
-        onView(withId(R.id.add_item_button)).perform(click());
+        ViewInteraction appCompatEditText4 = onView(
+                allOf(withId(R.id.add_item_date),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatEditText4.perform(replaceText("2023-04-22"), closeSoftKeyboard());
 
-        // Check if all required fields present on fragment
-        onView(withId(R.id.add_item_name)).check(matches(isDisplayed()));
-        onView(withId(R.id.add_item_date)).check(matches(isDisplayed()));
-        onView(withId(R.id.add_item_description)).check(matches(isDisplayed()));
-        onView(withId(R.id.add_item_make)).check(matches(isDisplayed()));
-        onView(withId(R.id.add_item_model)).check(matches(isDisplayed()));
-        onView(withId(R.id.add_item_price)).check(matches(isDisplayed()));
-        onView(withId(R.id.add_item_tag_spinner)).check(matches(isDisplayed()));
+        ViewInteraction appCompatEditText5 = onView(
+                allOf(withId(R.id.add_item_description), isDisplayed()));
+        appCompatEditText5.perform(replaceText("test_add"), closeSoftKeyboard());
 
-        //The database's API takes some time to return the data.
-        //this is to ensure that it gets enough time.
-        //TODO ideally something which specifically waits for the response would be used
-        Thread.sleep(1000);
+        ViewInteraction appCompatEditText6 = onView(
+                allOf(withId(R.id.add_item_make), isDisplayed()));
+        appCompatEditText6.perform(replaceText("1234"), closeSoftKeyboard());
+
+        ViewInteraction appCompatEditText7 = onView(
+                allOf(withId(R.id.add_item_model), isDisplayed()));
+        appCompatEditText7.perform(replaceText("1234"), closeSoftKeyboard());
+
+        ViewInteraction appCompatEditText8 = onView(
+                allOf(withId(R.id.add_item_serial_number), isDisplayed()));
+        appCompatEditText8.perform(replaceText("1234"), closeSoftKeyboard());
+
+        ViewInteraction appCompatEditText9 = onView(allOf(withId(R.id.add_item_price),isDisplayed()));
+        appCompatEditText9.perform(replaceText("23"), closeSoftKeyboard());
+
+        ViewInteraction appCompatEditText10 = onView(
+                allOf(withId(R.id.add_item_comment),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                7),
+                        isDisplayed()));
+        appCompatEditText10.perform(replaceText("test"), closeSoftKeyboard());
 
 
-        // Fill in mandatory fields
-        onView(withId(R.id.add_item_name)).perform(typeText("UI_Test_Add_Item"));
+        ViewInteraction appCompatEditText14 = onView(
+                allOf(withId(R.id.add_item_tag_spinner),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                8),
+                        isDisplayed()));
+        appCompatEditText14.perform(replaceText("test"), closeSoftKeyboard());
 
-        // Put in date
-        onView(withId(R.id.add_item_date)).perform(typeText("2017-11-25"));;
+        ViewInteraction materialButton2 = onView(
+                allOf(withId(android.R.id.button1), withText("OK"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.ScrollView")),
+                                        0),
+                                3)));
+        materialButton2.perform(scrollTo(), click());
 
+        Thread.sleep(rand);
 
-        onView(withId(R.id.add_item_description)).perform(typeText("UI TEST ADD ITEM"));
-        onView(withId(R.id.add_item_price)).perform(typeText("20.20"));
-        onView(withId(R.id.add_item_tag_spinner)).perform(typeText("TEST"));
+        onView(withText("test_add")).check(matches(isDisplayed()));
+        onView(withText("2023-04-22")).check(matches(isDisplayed()));
+        onView(withText("$23.00")).check(matches(isDisplayed()));
 
-        // Click on OK
-        onView(withText("OK")).perform(click());
-
-        // Check if item in ItemListView
-        onView(withText("UI_Test_Add_Item")).check(matches(isDisplayed()));
-
-        // Remove the test item from the document
-        itemsRef.document("UI_Test_Add_Item").delete();
-        Thread.sleep(1000);
+        Thread.sleep(rand);
     }
+
+    @After
+    public void cleanup() throws InterruptedException {
+        // Create bed item if it was deleted so these tests run again properly
+        try {
+            onView(withText("test_add")).check(matches(isDisplayed()));
+            onView(AllOf.allOf(withId(R.id.check_box), hasSibling(withText("test_add")))).perform(click());
+            onView(withId(R.id.delete_item_button)).perform(click());
+            onView(withId(android.R.id.button1)).perform(click());
+
+        } catch (NoMatchingViewException e) {
+            onView(withText("milk")).check(matches(isDisplayed()));
+        }
+
+        // Logout user
+        onView(withId(R.id.logout_button)).perform(click());
+    }
+
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
+    }
+
+
 }
