@@ -10,13 +10,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 
 /**
  * This class represents an item.
  */
 
-public class Item implements Serializable {
+public class  Item implements Serializable {
     private String name;
     private double price;
     private String dateAdded;
@@ -28,6 +29,7 @@ public class Item implements Serializable {
     private String tag;
     private String id;
     private boolean isSelected = false;
+    private List<String> image_refs;
 
     public void setName(String name) {
         this.name = name;
@@ -129,7 +131,7 @@ public class Item implements Serializable {
      * This constructor creates a new Item using all fields in Add Item Fragment
      */
     public Item(String name, double price, Date dateAdded, String description, String make,
-                String model, String serial, String comment, String tag) {
+                String model, String serial, String comment, String tag,List<String> image_references) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(dateAdded);
@@ -143,6 +145,23 @@ public class Item implements Serializable {
         this.serial = serial;
         this.comment = comment;
         this.tag = tag;
+        this.image_refs = image_references;
+    }
+    public Item(String name, double price, String dateAdded, String description, String make,
+                String model, String serial, String comment, String tag, List<String> image_references) {
+
+
+
+        this.name = name;
+        this.price = price;
+        this.dateAdded = dateAdded;
+        this.description = description;
+        this.make = make;
+        this.model = model;
+        this.serial = serial;
+        this.comment = comment;
+        this.tag = tag;
+        this.image_refs = image_references;
     }
 
     /**
@@ -206,5 +225,21 @@ public class Item implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Getter method for Image References
+     * @return a list of strings for image references
+     */
+    public List<String> getImageRefs() {
+        return image_refs;
+    }
+
+    /**
+     * Setter method for Image References
+     * @param imageRefs List of STrings for image references
+     */
+    public void setImageRefs(List<String> imageRefs) {
+        this.image_refs = imageRefs;
     }
 }

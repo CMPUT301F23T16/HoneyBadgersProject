@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Class encapsulates business logic for the AddItemFragment
@@ -71,6 +72,8 @@ public class EditItemFragment extends DialogFragment {
      */
     public interface EditItemInteractionInterface {
         void EditFragmentOKPressed(Item item);
+        List<String> getPhotoReferences();
+        void saveTemporaryState(Item item);
     }
 
     /**
@@ -180,7 +183,14 @@ public class EditItemFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                });
+                })
+                .setNeutralButton("Photos", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveState();
+                        new PhotosFragment().show(getActivity().getSupportFragmentManager(), "photos");
+                    }
+                });;
         AlertDialog dialogue = builder.create();
         dialogue.show();
 
@@ -217,7 +227,7 @@ public class EditItemFragment extends DialogFragment {
                 else {
                     try {
                         Item temp = new Item(name, Double.parseDouble(price), new SimpleDateFormat("yyyy-MM-dd").parse(dateAdded),
-                                description, make, model, serial, comment, tag);
+                                description, make, model, serial, comment, tag, listener.getPhotoReferences());
                         listener.EditFragmentOKPressed(temp);
                         dialogue.dismiss();
                     } catch (ParseException e) {
@@ -228,6 +238,28 @@ public class EditItemFragment extends DialogFragment {
         });
 
         return dialogue;
+    }
+
+    private void saveState() {
+        String name = itemName.getText().toString();
+        String price = itemPrice.getText().toString();
+        String dateAdded = purchaseDate.getText().toString();
+        String description = itemDescription.getText().toString();
+        String make = itemMake.getText().toString();
+        String model = itemModel.getText().toString();
+        String serial = itemSerial.getText().toString();
+        String comment = itemComment.getText().toString();
+        String tag = itemTag.getText().toString();
+        try {
+            if (dateAdded.trim().length() == 0)
+                listener.saveTemporaryState(new Item(name, price.trim().length() == 0 ? -1 : Double.parseDouble(price), "",
+                        description, make, model, serial, comment, tag, null));
+            else
+                listener.saveTemporaryState(new Item(name, price.trim().length() == 0 ? -1 : Double.parseDouble(price), new SimpleDateFormat("yyyy-MM-dd").parse(dateAdded),
+                        description, make, model, serial, comment, tag, null));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -275,7 +307,7 @@ public class EditItemFragment extends DialogFragment {
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+
         }
     }
 }
-

@@ -62,6 +62,8 @@ dependencies {
         exclude(module = "protobuf-lite")
     }
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    implementation("com.google.firebase:firebase-storage")
+
 
     // NEED THESE FOR BARCODE SCANNING
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
