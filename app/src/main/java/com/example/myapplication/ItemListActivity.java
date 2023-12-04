@@ -9,21 +9,29 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Intent;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.text.TextUtils;
 import android.util.Log;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +46,8 @@ public class ItemListActivity extends AppCompatActivity
         EditItemFragment.EditItemInteractionInterface,
         SortFilterFragment.SortFilterInteractionInterface,
         TagFragmentListener,
-        TagFragment.TagSelectionListener{
+        TagFragment.TagSelectionListener,
+        PhotosFragment.PhotosInteractionInterface{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
@@ -58,6 +67,11 @@ public class ItemListActivity extends AppCompatActivity
     private String date_from;
     private String date_to;
     public EditItemFragment editItemFragment;
+    private File directory;
+    private ArrayList<ImageView> photos;
+    private boolean editing_item = false;
+    private Item temporary_item = null;
+    private boolean reloading_images=false;
 
 
     /**
@@ -74,7 +88,7 @@ public class ItemListActivity extends AppCompatActivity
         setContentView(R.layout.item_list_activity);
 
         //Data base instance with userName
-        String userName = "Adi";
+        String userName = FirebaseAuth.getInstance().getCurrentUser().getUid();
         db = new DataBase (userName, this);
 
         addItemButton = findViewById(R.id.add_item_button);
@@ -82,6 +96,10 @@ public class ItemListActivity extends AppCompatActivity
         deleteItemButton.setOnClickListener(view ->{
             deleteConfirmDialog();
         });
+        directory = new File(getFilesDir(), "item_images");
+        if(!directory.exists()){
+            directory.mkdir();
+        }
 
         sortFilterButton = findViewById(R.id.sort_filter_button);
         visibleItems = db.getItemList();
@@ -98,6 +116,9 @@ public class ItemListActivity extends AppCompatActivity
             @Override
             public void onItemClick(Item item, int position) {
                 clickedItemIndex = position;
+                editing_item = true;
+                reloading_images=false;
+                temporary_item = null;
                 EditItemFragment.newInstance(item).show(getSupportFragmentManager(), "Edit Item");
             }
         });
@@ -112,6 +133,9 @@ public class ItemListActivity extends AppCompatActivity
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                editing_item=false;
+                reloading_images=false;
+                temporary_item = null;
                 new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
             }
         });
@@ -169,7 +193,7 @@ public class ItemListActivity extends AppCompatActivity
                 Item item = itemList.get(i);
                 if (item.isSelected()){
                     //If the item is selected, delete it from the database using its name.
-                    db.deleteSelectedItem(item.getName(),this);
+                    db.deleteSelectedItem(item,this);
                 }
 
             }
@@ -205,7 +229,7 @@ public class ItemListActivity extends AppCompatActivity
      * @param itemList List of items to calculate total of
      * @return The total price
      */
-    private Double calculateTotal(ArrayList<Item> itemList) {
+    static Double calculateTotal(ArrayList<Item> itemList) {
         Double totalPrice = 0.0;
         for(Item i : itemList){
             totalPrice += i.getPrice();
@@ -225,13 +249,12 @@ public class ItemListActivity extends AppCompatActivity
     }
 
     /**
-     * Adds the item received from the AddItemFragment to the user's item collection in DB
+     * Adds the item received from the AddItemFragment to the user's item collection in DB, also adds its photos
      * @param item item to be added to users item collection in DB
      */
     @Override
     public void AddFragmentOKPressed(Item item) {
-
-        db.addItem(item);
+        db.addItem(item,photos);
 
         Log.d("xxx sort-option", String.format("%s",sort_option));
         Log.d("xxx ascending", String.format("%s",ascending));
@@ -239,8 +262,42 @@ public class ItemListActivity extends AppCompatActivity
     }
 
     /**
+     * Creates a list of strings for photo references corresponding to the local List of ImageViews
+     * @return a list of strings for photo references
+     */
+    @Override
+    public List<String> getPhotoReferences() {
+        if(photos==null)
+            return null;
+        ArrayList<String> references = new ArrayList<>();
+        for(ImageView i:photos)
+        {
+            references.add((String) i.getTag());
+        }
+        return references;
+    }
+
+    /**
+     * Setter method for Temporary Itemobject
+     * @param item temporary state of the item
+     */
+    @Override
+    public void saveTemporaryState(Item item) {
+        temporary_item=item;
+    }
+
+    /**
+     * Return the Temporary Item object stored
+     * @return
+     */
+    @Override
+    public Item getTemporaryState() {
+        return temporary_item;
+    }
+
+    /**
      * Updates an item in the user's item collection (in DB)
-     *      using updated item received from EditItemFragment
+     *      using updated item received from EditItemFragment, also changes the imaages in DB
      * @param item item to be replaced in the user's item collection in DB
      */
     @Override
@@ -252,7 +309,8 @@ public class ItemListActivity extends AppCompatActivity
         Log.d("filter-option", String.format("%s",filter_option));
 
         // Add the updated item to DB
-        db.addItem(item);
+        db.addItem(item,photos);
+        editing_item = false;
         Log.d("xxx sort-option", String.format("%s",sort_option));
         Log.d("xxx ascending", String.format("%s",ascending));
         Log.d("filter-option", String.format("%s",filter_option));
@@ -334,6 +392,79 @@ public class ItemListActivity extends AppCompatActivity
 
             }
         }
+    }
+    /**
+     * Returns the working directory of the app
+     * @return File object for directory
+     */
+    @Override
+    public File getDirectory() {
+        return directory;
+    }
+
+    /**
+     * Adds an ImageView to the local list
+     * @param uri Uri of the Image to be added
+     */
+    @Override
+    public void addPhoto(Uri uri) {
+        ImageView photo = (ImageView) LayoutInflater.from(this).inflate(R.layout.item_image,null,false);
+        photo.setImageURI(uri);
+        photo.setTag(uri.getLastPathSegment().toString());
+        Log.d(uri.getLastPathSegment().toString(), "addPhoto: ");
+        photos.add(photo);
+    }
+
+    /**
+     * Returns PhotoArrayAdapter object linked to the local list of ImageViews photos
+     * @return PhotoArrayAdapter object
+     */
+    @Override
+    public PhotoArrayAdapter getGridAdapter() {
+        if(!reloading_images)
+            photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):new ArrayList<ImageView>();
+        return new PhotoArrayAdapter(this,photos);
+    }
+
+    /**
+     * Resets the local list of ImageViews to default
+     */
+    @Override
+    public void resetPhotos() {
+        photos = editing_item?db.getItemImages(this,visibleItems.get(clickedItemIndex)):new ArrayList<ImageView>();
+    }
+
+    /**
+     * Removes the selected photo from local list and calls db.deletePhoto() to remove it from the database
+     * @param position index of photo to be removed in the local list
+     */
+    @Override
+    public void removePhoto(int position)
+    {
+        if(editing_item) {
+
+            db.deletePhoto(visibleItems.get(clickedItemIndex), photos.get(position));
+            visibleItems.get(clickedItemIndex).getImageRefs().remove(position);
+        }
+        photos.remove(position);
+    }
+
+    /**
+     * Sets Reloading Images to true to tell user is not opening the add/edit item fragment for the first time
+     */
+    @Override
+    public void setReloadingImagesToTrue() {
+        reloading_images=true;
+    }
+
+    /**
+     * Method to see if the user is editing an Item
+     * @return true if user is editing Item, false otherwise
+     *
+     */
+    @Override
+    public boolean getEditingItem() {
+        return editing_item;
     }
 }
 

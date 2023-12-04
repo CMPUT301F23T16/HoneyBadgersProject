@@ -45,11 +45,11 @@
 
     <EditText
         android:id="@+id/add_item_description"
-        android:layout_width="250sp"
-        android:layout_height="50sp"
+        android:layout_width="251dp"
+        android:layout_height="50dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="81dp"
+        android:layout_marginEnd="80dp"
         android:layout_marginBottom="2dp"
         android:hint="brief description"
         android:textSize="18sp"
@@ -90,16 +90,17 @@
 
     <EditText
         android:id="@+id/add_item_serial_number"
-        android:layout_width="250sp"
+        android:layout_width="200sp"
         android:layout_height="50sp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="81dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
-        android:textSize="18sp"
         android:hint="serial number"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/add_item_price"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/scan_button"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_item_model" />
 
@@ -151,5 +152,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_item_comment" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/scan_button"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginBottom="11dp"
+        android:drawableTop="@drawable/baseline_qr_code_scanner_24"
+        app:layout_constraintBottom_toTopOf="@+id/add_item_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/add_item_serial_number"
+        app:layout_constraintTop_toBottomOf="@+id/add_item_model"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

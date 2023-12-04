@@ -6,13 +6,20 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
+import android.provider.MediaStore;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +29,12 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -29,6 +42,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.RGBLuminanceSource;
+import com.google.zxing.Reader;
+import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Class encapsulates business logic for the AddItemFragment
@@ -43,6 +68,10 @@ public class AddItemFragment extends DialogFragment{
     private EditText itemPrice;
     private EditText itemComment;
     private TextView itemTag;
+
+    private Button scan_button;
+    private ItemInfoFetcher infoFetcher;
+
 
     private DatePickerDialog datePickerDialog;
     private AddItemInteractionInterface listener;
@@ -77,6 +106,9 @@ public class AddItemFragment extends DialogFragment{
      */
     public interface AddItemInteractionInterface {
         void AddFragmentOKPressed(Item item);
+        List<String> getPhotoReferences();
+        void saveTemporaryState(Item item);
+        Item getTemporaryState();
     }
 
     /**
@@ -102,14 +134,25 @@ public class AddItemFragment extends DialogFragment{
         itemPrice = view.findViewById(R.id.add_item_price);
         itemComment = view.findViewById(R.id.add_item_comment);
         itemTag = view.findViewById(R.id.add_item_tag);
+        scan_button = view.findViewById(R.id.scan_button);
 
-//        itemTag.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openTagFragment();
-//            }
-//        });
 
+        // BUTTON CLICK TRIGGERS ZXING BARCODE SCANNER
+        // SUCCESSFUL SCAN TRIGGERS onActivityResult
+        scan_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                IntentIntegrator integrator = IntentIntegrator.forSupportFragment(AddItemFragment.this);
+                integrator.setOrientationLocked(true);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+                integrator.setPrompt("Scan a barcode or QR code");
+                integrator.initiateScan();
+            }
+        });
+
+        if(listener.getTemporaryState()!=null)
+            reloadState();
         purchaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,6 +191,15 @@ public class AddItemFragment extends DialogFragment{
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
+                })
+                .setNeutralButton("Photos", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("Running SaveState", "onClick: ");
+                        saveState();
+                        Log.d("Running PhotosFragment", "onClick: ");
+                        new PhotosFragment().show(getActivity().getSupportFragmentManager(), "Photos");
+                    }
                 });
         AlertDialog dialogue = builder.create();
         dialogue.show();
@@ -180,7 +232,7 @@ public class AddItemFragment extends DialogFragment{
                 else {
                     try {
                         Item temp = new Item(name, Double.parseDouble(price), new SimpleDateFormat("yyyy-MM-dd").parse(dateAdded),
-                                description, make, model, serial, comment, tag);
+                                description, make, model, serial, comment, tag, listener.getPhotoReferences());
                         listener.AddFragmentOKPressed(temp);
                         dialogue.dismiss();
                     } catch (ParseException e) {
@@ -194,7 +246,96 @@ public class AddItemFragment extends DialogFragment{
     }
 
 
+    /**
+     * Method to save the state of the fragment to a temporary Item
+     * calls listener.saveTemporaryState
+     */
+    private void saveState(){
+        String name = itemName.getText().toString();
+        String price = itemPrice.getText().toString();
+        String dateAdded = purchaseDate.getText().toString();
+        String description = itemDescription.getText().toString();
+        String make = itemMake.getText().toString();
+        String model = itemModel.getText().toString();
+        String serial = itemSerial.getText().toString();
+        String comment = itemComment.getText().toString();
+        String tag = itemTag.getText().toString();
+        try{
+            if(dateAdded.trim().length() == 0)
+                listener.saveTemporaryState(new Item(name, price.trim().length() == 0?-1:Double.parseDouble(price), "",
+                        description, make, model, serial, comment, tag, null));
+            else
+                listener.saveTemporaryState(new Item(name, price.trim().length() == 0?-1:Double.parseDouble(price), new SimpleDateFormat("yyyy-MM-dd").parse(dateAdded),
+                        description, make, model, serial, comment, tag, null));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    /**
+     * Reloads the state of the fragment from a temporary item (fills the fields accordingly)
+     * calls listener.getTemporaryState()
+     */
+    private void reloadState()
+    {
+        Item temp = listener.getTemporaryState();
+        itemName.setText(temp.getName());
+        purchaseDate.setText(temp.getDateAdded());
+        itemDescription.setText(temp.getDescription());
+        itemMake.setText(temp.getMake());
+        itemModel.setText(temp.getModel());
+        itemSerial.setText(temp.getSerial());
+        if(temp.getPrice()!=-1)
+            itemPrice.setText(temp.getPrice().toString());
+        itemComment.setText(temp.getComment());
+        itemTag.setText(temp.getTag());
+    }
 
+    /**
+     * Method triggered when barcode scan or gallery image picker succeeds
+     * The result from those intents can be handled appropriate here
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        // UPDATE PRODUCT SERIAL AND DESCRIPTION FROM BARCODE
+        // BARCODE OBTAINED FROM BARCODE SCAN FROM CAMERA
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                String barCode = result.getContents();
+                Toast.makeText(requireContext(), "Scanned: " + barCode, Toast.LENGTH_LONG).show();
+
+                // Process the scanned barcode or QR code here
+                // Process the scanned barcode or QR code here
+                itemSerial.setText(result.getContents());
+
+                // Get description from barcode
+                infoFetcher = new ItemInfoFetcher(new NetworkHandler(), requireContext());
+                infoFetcher.fetchProductInfo(barCode, new ItemInfoFetcher.ProductInfoCallback() {
+                    @Override
+                    public void onSuccess(String description) {
+                        itemDescription.setText(description);
+                    }
+                    @Override
+                    public void onError(String error) {
+                        itemDescription.setText(error);
+                    }
+                });
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }
