@@ -167,7 +167,7 @@ public class DataBase {
      */
 
     public void addItem(Item item,ArrayList<ImageView> photos){ 
-        //itemsRef.document(item.getName()).set(item);
+       itemsRef.document(item.getName()).set(item);
         StorageReference storageReference ;
         if(photos==null)
             return;
@@ -187,7 +187,6 @@ public class DataBase {
                 @Override
                 public void onFailure(Exception exception) {
                     // Handle unsuccessful uploads
-                    item.getImageRefs().remove((String)imageView.getTag());
                     Log.d((String)imageView.getTag(), "onFailure: upload Failed");
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -199,7 +198,6 @@ public class DataBase {
                 }
             });
         }
-        itemsRef.document(item.getName()).set(item);
 
     }
 
