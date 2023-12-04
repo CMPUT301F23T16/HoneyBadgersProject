@@ -218,6 +218,7 @@ public class LoginSignupActivity extends AppCompatActivity {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
                             Map<String, Object> userDetail = new HashMap<>();
+                            userDetail.put("userName", signupUsername.getText().toString().trim());
                             userDetail.put("firstName", signupFirstName.getText().toString().trim());
                             userDetail.put("lastName", signupLastName.getText().toString().trim());
                             userDetail.put("dateOfBirth", signupDateOfBirth.getText().toString().trim());
