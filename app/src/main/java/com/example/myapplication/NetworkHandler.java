@@ -11,10 +11,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class NetworkHandler {
-    private static final String API_KEY = "ad5c40df65mshba2972e2b4bd264p1df5f1jsnae362888b3bb";
 
+    /**
+     * Sets up the HTTP connection with the specified URL.
+     * Sets request properties to GET and sets the API key.
+     * @param url The URL for the HTTP request.
+     * @return The HttpURLConnection object.
+     */
     private HttpURLConnection setupConnection(URL url) {
         HttpURLConnection urlConnection;
+        String API_KEY = "ad5c40df65mshba2972e2b4bd264p1df5f1jsnae362888b3bb";
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -25,6 +31,12 @@ public class NetworkHandler {
             return null;
         }
     }
+    /**
+     * Reads the response from the HttpURLConnection and converts it to a string.
+     * @param connection The HttpURLConnection object.
+     * @return The response string.
+     * @throws IOException If an I/O error occurs.
+     */
     private String readResponse(HttpURLConnection connection) throws IOException {
         StringBuilder result = new StringBuilder();
 
@@ -38,6 +50,12 @@ public class NetworkHandler {
 
         return result.toString();
     }
+    /**
+     * Performs an HTTP GET request to the specified URL and returns the response.
+     * @param urlString The URL for the HTTP request.
+     * @return The response string from the HTTP request.
+     * @throws IOException If an I/O error occurs.
+     */
     public String performRequest(String urlString) throws IOException {
         String result;
         HttpURLConnection urlConnection = null;
