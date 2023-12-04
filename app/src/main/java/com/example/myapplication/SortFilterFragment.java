@@ -37,11 +37,11 @@ public class SortFilterFragment extends DialogFragment implements TagFragment.Ta
     public interface SortFilterInteractionInterface {
         /**
          * This is called when the user presses the "OK" button after selecting their sorting and filtering options.
-         *  @param sortOption   The selected sorting option (e.g., date, description, make, value).
-         *  @param ascending    True if sorting should be in ascending order, false otherwise.
-         *  @param filterOption The selected filter option (not yet implemented in this example).
-         *  @param dateFrom      The starting date for filtering (if applicable).
-         *  @param dateTo        The ending date for filtering (if applicable).
+         *  @param sort_option   The selected sorting option (e.g., date, description, make, value).
+         *  @param asc    True if sorting should be in ascending order, false otherwise.
+         *  @param filter_option The selected filter option (not yet implemented in this example).
+         *  @param date_from      The starting date for filtering (if applicable).
+         *  @param date_to        The ending date for filtering (if applicable).
          */
         void SortFilterFragmentOKPressed(int sort_option,boolean asc,int filter_option, String date_from, String date_to);
     }
