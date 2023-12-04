@@ -51,10 +51,16 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
     androidTestImplementation("com.google.android.material:material:1.10.0")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
-
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
-    implementation("com.google.firebase:firebase-firestore")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.3.0"){
+        // IMPORTANT
+        // !!! If using espresso-contrib,
+        // !!! This module needs to be excluded for our UI errors to go away //
+        /**
+         * https://stackoverflow.com/questions/72558160/why-am-i-getting-internal-error-in-cloud-firestore-24-1-2-in-my-android-app-o
+         * https://stackoverflow.com/questions/66338416/internal-error-in-cloud-firestore-22-1-0-when-running-instrumentation-test
+         */
+        exclude(module = "protobuf-lite")
+    }
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
 
     // NEED THESE FOR BARCODE SCANNING
