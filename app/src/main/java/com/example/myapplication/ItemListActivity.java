@@ -350,8 +350,10 @@ PhotosFragment.PhotosInteractionInterface{
     @Override
     public void removePhoto(int position)
     {
-        if(editing_item)
-            db.deletePhoto(visibleItems.get(position),photos.get(position));
+        if(editing_item) {
+            visibleItems.get(clickedItemIndex).getImageRefs().remove(position);
+            db.deletePhoto(visibleItems.get(clickedItemIndex), photos.get(position));
+        }
         photos.remove(position);
     }
 

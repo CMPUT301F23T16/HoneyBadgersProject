@@ -119,7 +119,7 @@ public class DataBase {
 
     /**
      * This will delete an item from Firestore database
-     * @param itemName The name os the item which is to be deleted
+     * @param item The item which is to be deleted
      * @param context The context from which this method is called, typically the current Activity.
      */
     public void deleteSelectedItem(Item item, ItemListActivity context){
@@ -251,17 +251,21 @@ public class DataBase {
                     // Data for "images/island.jpg" is returns, use this as needed
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, 1000, 1400, false));
-                    image_view.setTag(s);
-                    image_views.add(image_view);
+                    image_view.setBackgroundResource(0);
                     Log.d("Image Loaded", "onSuccess: ");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(Exception exception) {
                     // Handle any errors
+                    image_view.setBackgroundResource(R.drawable.ic_action_name);
+
                     Log.d("IMAGE NOT LOADED", "onFailure: ");
                 }
             });
+            image_view.setBackgroundResource(R.drawable.ic_action_downloading);
+            image_view.setTag(s);
+            image_views.add(image_view);
 
         }
         Log.d("DONE", "getItemImages: ");
