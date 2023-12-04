@@ -1,7 +1,5 @@
 package com.example.myapplication;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;

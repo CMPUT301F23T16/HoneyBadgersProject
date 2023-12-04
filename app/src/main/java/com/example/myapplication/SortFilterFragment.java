@@ -84,11 +84,7 @@ public class SortFilterFragment extends DialogFragment implements TagFragment.Ta
         selectedTag = tag;
     }
 
-    @Override
-    public void onTagListUpdated(List<String> updatedTagList) {
-        // Update the tag list in the search view
-        // This can be done if you have a reference to the search view's adapter
-    }
+
     //////////////
 
   //  @Override

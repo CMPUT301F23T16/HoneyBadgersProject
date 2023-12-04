@@ -20,12 +20,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -41,10 +45,11 @@ public class EditItemFragment extends DialogFragment {
     private EditText itemSerial;
     private EditText itemPrice;
     private EditText itemComment;
-    private TextView itemTag;
+    public TextView itemTag;
 
     private DatePickerDialog datePickerDialog;
     private EditItemInteractionInterface listener;
+    private TagFragmentListener tagFragmentListener;
 
     /**
      * This method is attaches the Activity to an attribute of the fragment
@@ -53,11 +58,18 @@ public class EditItemFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        ((ItemListActivity) context).editItemFragment = this;
         if (context instanceof EditItemInteractionInterface) {
             listener = (EditItemInteractionInterface) context;
         }
         else {
             throw new RuntimeException(context.toString() + "OnFragmentInteractionListener is not implemented");
+        }
+        if (context instanceof TagFragmentListener) {
+            tagFragmentListener = (TagFragmentListener) context;
+        }
+        else {
+            throw new RuntimeException(context.toString() + "TagFragmentListener is not implemented");
         }
     }
 
@@ -121,6 +133,13 @@ public class EditItemFragment extends DialogFragment {
         itemComment.setText(clickedItem.getComment());
         itemTag.setText(TextUtils.join(",",clickedItem.getTag()));
 
+        itemTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTagFragment();
+            }
+        });
+
 
         // Coding logic for date picker
         purchaseDate.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +172,7 @@ public class EditItemFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
-                .setTitle("Add/edit item")
+                .setTitle("Edit item")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -181,7 +200,7 @@ public class EditItemFragment extends DialogFragment {
                 String model = itemModel.getText().toString();
                 String serial = itemSerial.getText().toString();
                 String comment = itemComment.getText().toString();
-                List<String> tag = new ArrayList<>(); //FixMe
+                List<String> tag = Arrays.asList(itemTag.getText().toString().split(","));
 
                 if (name.trim().length() == 0){
                     Toast.makeText(requireContext(), "Please input an item name!", Toast.LENGTH_SHORT).show();
@@ -210,4 +229,9 @@ public class EditItemFragment extends DialogFragment {
 
         return dialogue;
     }
+    private void openTagFragment(){
+        tagFragmentListener.onOpenTagFragment();
+    }
+
+
 }

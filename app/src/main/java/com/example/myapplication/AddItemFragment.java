@@ -47,7 +47,7 @@ public class AddItemFragment extends DialogFragment{
     private DatePickerDialog datePickerDialog;
     private AddItemInteractionInterface listener;
 
-    private TagFragmentListener tagFragmentListener;
+//    private TagFragmentListener tagFragmentListener;
 
     /**
      * This method is attaches the Activity to an attribute of the fragment
@@ -62,12 +62,12 @@ public class AddItemFragment extends DialogFragment{
         else {
             throw new RuntimeException(context.toString() + "OnFragmentInteractionListener is not implemented");
         }
-        if (context instanceof TagFragmentListener) {
-            tagFragmentListener = (TagFragmentListener) context;
-        }
-        else {
-            throw new RuntimeException(context.toString() + "TagFragmentListener is not implemented");
-        }
+//        if (context instanceof TagFragmentListener) {
+//            tagFragmentListener = (TagFragmentListener) context;
+//        }
+//        else {
+//            throw new RuntimeException(context.toString() + "TagFragmentListener is not implemented");
+//        }
 
     }
 
@@ -77,10 +77,6 @@ public class AddItemFragment extends DialogFragment{
      */
     public interface AddItemInteractionInterface {
         void AddFragmentOKPressed(Item item);
-    }
-
-    public interface TagFragmentListener {
-        void onOpenTagFragment();
     }
 
     /**
@@ -107,12 +103,12 @@ public class AddItemFragment extends DialogFragment{
         itemComment = view.findViewById(R.id.add_item_comment);
         itemTag = view.findViewById(R.id.add_item_tag);
 
-        itemTag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openTagFragment();
-            }
-        });
+//        itemTag.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openTagFragment();
+//            }
+//        });
 
         purchaseDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +140,7 @@ public class AddItemFragment extends DialogFragment{
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view)
-                .setTitle("Add/edit item")
+                .setTitle("Add item")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -197,8 +193,8 @@ public class AddItemFragment extends DialogFragment{
         return dialogue;
     }
 
-    private void openTagFragment(){
-        tagFragmentListener.onOpenTagFragment();
-    }
+
+
+
 
 }

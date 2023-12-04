@@ -37,8 +37,8 @@ public class ItemListActivity extends AppCompatActivity
         AddItemFragment.AddItemInteractionInterface,
         EditItemFragment.EditItemInteractionInterface,
         SortFilterFragment.SortFilterInteractionInterface,
-        AddItemFragment.TagFragmentListener,
-        TagSelectionListener{
+        TagFragmentListener,
+        TagFragment.TagSelectionListener{
 
     private RecyclerView itemListView;
     private ItemArrayAdapter itemListAdapter;
@@ -57,6 +57,7 @@ public class ItemListActivity extends AppCompatActivity
 
     private String date_from;
     private String date_to;
+    public EditItemFragment editItemFragment;
 
 
     /**
@@ -300,16 +301,13 @@ public class ItemListActivity extends AppCompatActivity
         tagFragment.show(getSupportFragmentManager(), "Add Tag(s)");
     }
 
-
-
     @Override
     public void onTagSelected(String tag) {
-
         //System.out.println(tag);
         // Create an instance of TagFragment
         TagFragment tagFragment = new TagFragment();
 
-// Pass the clicked item index to the TagFragment
+        // Pass the clicked item index to the TagFragment
         Bundle bundle = new Bundle();
         bundle.putInt("clickedItemIndex", clickedItemIndex);
         tagFragment.setArguments(bundle);
@@ -324,13 +322,16 @@ public class ItemListActivity extends AppCompatActivity
                 Item clickedItem = visibleItems.get(clickedItemIndex);
 
                 // Add the selected tag to the clicked item
+
                 clickedItem.setTag(tag);
 
                 // Update the item in the database or perform any necessary actions
                 db.updateItem(clickedItem);
+                String currentTag = editItemFragment.itemTag.getText().toString();
+                String newTag = currentTag.length() == 0 ?tag:currentTag + ',' + tag;
+                editItemFragment.itemTag.setText(newTag);
 
-                // Notify the adapter of the data change
-                itemListAdapter.notifyDataSetChanged();
+
             }
         }
     }
