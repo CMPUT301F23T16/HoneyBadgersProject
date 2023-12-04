@@ -14,9 +14,9 @@ public class TestSorterFilterer {
 
     private ArrayList<Item> mockItemList() {
         ArrayList<Item> itemList = new ArrayList<Item>();
-        itemList.add(new Item("TV", 55.49, new Date(), "test description", "test make", "test model", "test serial", "test comment", "test tag"));
-        itemList.add(new Item("Fridge", 55.38, new Date(), "test description", "test make", "test model", "test serial", "test comment", "test tag"));
-        itemList.add(new Item("Sofa", 57.29, new Date(), "test description", "test make", "test model", "test serial", "test comment", "test tag"));
+        itemList.add(new Item("TV", 55.49, new Date(), "test description", "test make", "test model", "test serial", "test comment", new ArrayList<String>(),new ArrayList<String>()));
+        itemList.add(new Item("Fridge", 55.38, new Date(), "test description", "test make", "test model", "test serial", "test comment", new ArrayList<String>(),new ArrayList<String>()));
+        itemList.add(new Item("Sofa", 57.29, new Date(), "test description", "test make", "test model", "test serial","test comment", new ArrayList<String>(),new ArrayList<String>()));
         return itemList;
     }
 

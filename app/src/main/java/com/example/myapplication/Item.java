@@ -153,7 +153,7 @@ public class  Item implements Serializable {
         this.image_refs = image_references;
     }
     public Item(String name, double price, String dateAdded, String description, String make,
-                String model, String serial, String comment, String tag, List<String> image_references) {
+                String model, String serial, String comment, List<String> tag, List<String> image_references) {
 
 
 

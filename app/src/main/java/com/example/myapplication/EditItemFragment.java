@@ -265,7 +265,7 @@ public class EditItemFragment extends DialogFragment {
     }
 
 
-}
+
 
     private void saveState() {
         String name = itemName.getText().toString();
@@ -276,7 +276,7 @@ public class EditItemFragment extends DialogFragment {
         String model = itemModel.getText().toString();
         String serial = itemSerial.getText().toString();
         String comment = itemComment.getText().toString();
-        String tag = itemTag.getText().toString();
+        List<String> tag = Arrays.asList(itemTag.getText().toString().split(","));
         try {
             if (dateAdded.trim().length() == 0)
                 listener.saveTemporaryState(new Item(name, price.trim().length() == 0 ? -1 : Double.parseDouble(price), "",

@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import android.provider.MediaStore;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import com.google.zxing.BinaryBitmap;
@@ -259,7 +261,7 @@ public class AddItemFragment extends DialogFragment{
         String model = itemModel.getText().toString();
         String serial = itemSerial.getText().toString();
         String comment = itemComment.getText().toString();
-        String tag = itemTag.getText().toString();
+        List<String> tag = Arrays.asList(itemTag.getText().toString().split(","));
         try{
             if(dateAdded.trim().length() == 0)
                 listener.saveTemporaryState(new Item(name, price.trim().length() == 0?-1:Double.parseDouble(price), "",
@@ -288,7 +290,7 @@ public class AddItemFragment extends DialogFragment{
         if(temp.getPrice()!=-1)
             itemPrice.setText(temp.getPrice().toString());
         itemComment.setText(temp.getComment());
-        itemTag.setText(temp.getTag());
+        itemTag.setText(TextUtils.join(",",temp.getTag()));
     }
 
     /**
