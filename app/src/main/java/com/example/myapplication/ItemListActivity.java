@@ -444,7 +444,7 @@ public class ItemListActivity extends AppCompatActivity
         if(editing_item) {
 
             db.deletePhoto(visibleItems.get(clickedItemIndex), photos.get(position));
-            visibleItems.get(clickedItemIndex).getImageRefs().remove(position);
+            visibleItems.get(clickedItemIndex).getImageRefs().remove(photos.get(position).getTag());
         }
         photos.remove(position);
     }

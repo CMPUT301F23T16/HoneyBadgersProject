@@ -301,6 +301,12 @@ public class DataBase {
      */
     public void deletePhoto(Item item,ImageView imageView)
     {
-        storage.getReference().child("images/"+item.getName()+"/"+(String)imageView.getTag()).delete();
+        try {
+            storage.getReference().child("images/" + item.getName() + "/" + (String) imageView.getTag()).delete();
+        }
+        catch(NullPointerException e)
+        {
+            Log.d("Could Not Delete Image", "deletePhoto: "+e.toString());
+        }
     }
 }
