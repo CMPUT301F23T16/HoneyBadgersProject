@@ -41,7 +41,7 @@ Tests all passed (2/3)
 - Functionalities like barcode reader and scanner is not shown in the UML diagram
 - Some comments are difficult to read (2/3)
 
-## Total = 15.50
+## Total = 17.0
 
 
 
